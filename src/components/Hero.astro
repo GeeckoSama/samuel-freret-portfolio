@@ -1,0 +1,35 @@
+---
+interface Props {
+  title: string;
+  background: string;
+  categories: string[];
+}
+
+const { title, background, categories } = Astro.props;
+---
+
+<div class='h-screen relative'>
+  <img src={background} class='h-full w-auto lg:w-full object-cover' alt='' />
+  <div class='absolute inset-0 w-full h-full'>
+    <div
+      class='sticky top-[20%] lg:top-[10%] mb-[45%] lg:mb-[23%] mix-blend-difference invert px-12'
+    >
+      <div
+        class='text-center text-7xl lg:text-9xl text-zinc-950 font-black uppercase'
+      >
+        {title}
+      </div>
+    </div>
+    <div
+      class='absolute top-[85%] lg:top-[75%] right-5 lg:right-10 text-end space-y-2 lg:space-y-4 mix-blend-difference invert'
+    >
+      {
+        categories.map((category) => (
+          <div class='text-3xl lg:text-5xl text-zinc-900 font-extrabold uppercase'>
+            {category}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>

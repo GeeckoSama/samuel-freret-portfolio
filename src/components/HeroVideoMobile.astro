@@ -1,0 +1,70 @@
+---
+interface Props {
+  videos: {
+    title: string;
+    background: string;
+  }[];
+}
+
+const { videos } = Astro.props;
+---
+
+<div class='h-screen relative'>
+  <div class='swiper h-screen w-screen'>
+    <div class='swiper-wrapper'>
+      {
+        videos.map((video) => {
+          return (
+            <div class='swiper-slide relative'>
+              <img
+                src={video.background}
+                alt=''
+                class='h-screen w-auto object-cover'
+              />
+              <div class='swiper-lazy-preloader' />
+              <div class='absolute inset-0 w-full h-full'>
+                <div class='sticky top-[85%] mt-[50%] lg:mt-[10%] mb-[20%] lg:mb-[10%] px-0 lg:px-12'>
+                  <div class='bg-white/60 backdrop-blur-xl lg:rounded shadow-md max-w-lg p-4 hover:bg-white/90 transition-colors'>
+                    <h2 class='text-3xl lg:text-4xl text-zinc-900 font-bold mb-4 lg:mb-8'>
+                      {video.title}
+                    </h2>
+                    <div class='flex justify-center lg:justify-end mt-4 lg:mt-8'>
+                      <button class='px-1.5 py-0.5 border-zinc-950 border-2 text-lg font-bold text-zinc-950 rounded hover:bg-zinc-950 hover:text-zinc-50 transition-colors'>
+                        Voir la vidéo
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+    <div class='swiper-pagination'></div>
+  </div>
+</div>
+
+<script>
+  import Swiper from "swiper";
+  import { Pagination, Mousewheel } from "swiper/modules";
+  import "swiper/css/bundle";
+  import "swiper/css/pagination";
+
+  const swiper = new Swiper(".swiper", {
+    modules: [Pagination, Mousewheel],
+    direction: "horizontal",
+    loop: true,
+    mousewheel: false,
+    pagination: {
+      el: ".swiper-pagination",
+    },
+  });
+</script>
+
+<style>
+  :root {
+    --swiper-theme-color: #fff !important;
+    --swiper-navigation-size: 56px !important;
+  }
+</style>

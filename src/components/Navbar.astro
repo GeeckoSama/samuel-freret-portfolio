@@ -1,0 +1,16 @@
+---
+import { Image } from "astro:assets";
+import Logo from "../images/logo.png";
+---
+
+<div
+  class='fixed inset-x-0 top-0 bg-transparent bg-opacity-0 flex flex-1 justify-between items-center p-2 z-40'
+>
+  <div></div>
+  <div class='flex justify-center space-x-2 grow'>
+    <a href='/'>
+      <Image src={Logo} class='h-12 w-auto' alt='Guilty vision logo' />
+    </a>
+  </div>
+  <div></div>
+</div>

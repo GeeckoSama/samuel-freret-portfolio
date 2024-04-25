@@ -1,0 +1,40 @@
+---
+interface Props {
+  videos: {
+    title: string;
+    background: string;
+  }[];
+}
+
+const { videos } = Astro.props;
+---
+
+<div class='h-screen flex flex-col items-center justify-center space-y-10'>
+  <h2 class='text-5xl lg:text-7xl font-extrabold text-zinc-950'>Clips vidéo</h2>
+  <ul class='container'>
+    {
+      videos.map((video) => {
+        return (
+          <li class='relative border-t-2 border-zinc-950 last-of-type:border-b-2 py-1'>
+            <a href='#' class='group flex flex-row justify-center items-center'>
+              <span class='text-3xl lg:text-7xl font-extrabold text-zinc-950 uppercase'>
+                {video.title.slice(0, Math.round(video.title.length / 2))}
+              </span>
+              <img
+                src={video.background}
+                alt={video.title}
+                class='w-0 rounded shadow h-24 group-hover:w-48 transition-all duration-300 ease-in-out hover:mx-2'
+              />
+              <span class='text-3xl lg:text-7xl font-extrabold text-zinc-950 uppercase'>
+                {video.title.slice(
+                  Math.round(video.title.length / 2),
+                  video.title.length
+                )}
+              </span>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</div>

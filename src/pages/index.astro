@@ -1,9 +1,66 @@
 ---
+import Contact from "../components/Contact.astro";
+import Hero from "../components/Hero.astro";
+import HeroAlbums from "../components/HeroAlbums.astro";
+import HeroVideo from "../components/HeroVideo.astro";
+import HeroVideoMobile from "../components/HeroVideoMobile.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title='Welcome to Astro.'>
-  <main>
-    <h1>Welcome</h1>
-  </main>
+  <div class='max-h-screen snap snap-y snap-mandatory overflow-y-scroll'>
+    <section class='snap-center'>
+      <Hero
+        title='Samuel Freret'
+        background='https://picsum.photos/1920/1080?random=1'
+        categories={["Photographe", "Vidéaste", "Beau gosse"]}
+      />
+    </section>
+    <section class='snap-center'>
+      <HeroAlbums
+        title='Titre album'
+        description='lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, vestibulum mi nec, ultricies metus. Nulla facilisi'
+        background='https://picsum.photos/1920/1080?random=2'
+      />
+    </section>
+    <section class='snap-center hidden lg:block'>
+      <HeroVideo
+        videos={[
+          {
+            title: "Vidéo 1",
+            background: "https://picsum.photos/720/540?random=3",
+          },
+          {
+            title: "Vidéo 2",
+            background: "https://picsum.photos/720/540?random=4",
+          },
+          {
+            title: "Vidéo 3",
+            background: "https://picsum.photos/720/540?random=5",
+          },
+        ]}
+      />
+    </section>
+    <section class='snap-center lg:hidden'>
+      <HeroVideoMobile
+        videos={[
+          {
+            title: "Vidéo 1",
+            background: "https://picsum.photos/720/540?random=3",
+          },
+          {
+            title: "Vidéo 2",
+            background: "https://picsum.photos/720/540?random=4",
+          },
+          {
+            title: "Vidéo 3",
+            background: "https://picsum.photos/720/540?random=5",
+          },
+        ]}
+      />
+    </section>
+    <section class='snap-center'>
+      <Contact />
+    </section>
+  </div>
 </Layout>
