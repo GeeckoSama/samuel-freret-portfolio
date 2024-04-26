@@ -1,0 +1,14 @@
+---
+import ReverseScrollingGallery from "../components/ReverseScrollingGallery.astro";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title='Album'>
+  <div class='fixed inset-10'>
+    <a href='/' class='group cursor-pointer px-2.5 py-1.5'
+      ><span class='text-lg font-semibold group-hover:underline'>return</span
+      ></a
+    >
+  </div>
+  <ReverseScrollingGallery />
+</Layout>

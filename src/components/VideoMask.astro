@@ -1,0 +1,72 @@
+---
+const cdn = "https://samuel-freret.imgix.net/";
+const video = {
+  path: "./TEASER - COLGATE HOLD UP.mp4",
+  svg_path: "videos/Colgate & holdup/colgate&holdup.svg",
+};
+---
+
+<div id='container' class='relative h-[300vh] bg-base-100'>
+  <div
+    style={{
+      maskImage: `url('${cdn + video.svg_path}')`,
+      maskPosition: "center center",
+      maskRepeat: "no-repeat",
+      maskSize: "50%",
+    }}
+    class='sticky top-0 flex h-screen items-center justify-center overflow-hidden mask'
+  >
+    <video autoplay muted loop class='h-full w-full object-cover'>
+      <source src={video.path} type='video/mp4' />
+    </video>
+  </div>
+</div>
+
+<script>
+  // check if the browser supports the scroll-driven animations
+  if (!CSS.supports("animation-timeline", "scroll(root block)")) {
+    console.warn(
+      "Browser does not support scroll-driven animations, GSAP will be used instead"
+    );
+    const gsap = await import("gsap");
+    const ScrollTrigger = await import("gsap/ScrollTrigger");
+
+    const container = document.querySelector("#container");
+    const mask = document.querySelector(".mask");
+
+    if (container && mask) {
+      const context = gsap.gsap.context(() => {
+        gsap.gsap.registerPlugin(ScrollTrigger);
+        gsap.gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: container,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: true,
+            },
+          })
+          .fromTo(mask, { maskSize: "80%" }, { maskSize: "50000%" });
+      });
+    }
+  } else {
+    console.log("Browser supports scroll-driven animations");
+  }
+</script>
+
+<style>
+  @keyframes reveal-video {
+    from {
+      mask-size: 80%;
+    }
+    to {
+      mask-size: 50000%;
+    }
+  }
+
+  .mask {
+    animation: reveal-video ease-in forwards;
+    animation-timeline: scroll(root block);
+    animation-range: entry 0% entry 50%;
+  }
+</style>
