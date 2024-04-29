@@ -1,0 +1,21 @@
+---
+import { getFirestore } from "firebase-admin/firestore";
+import VideoMask from "../../components/VideoMask.astro";
+import { app } from "../../utils/firebase/server";
+import type { Video } from "../../utils/interfaces/video.type";
+
+const { id } = Astro.params;
+
+const db = getFirestore(app);
+const videoRef = db.doc(`videos/${id}`);
+const doc = await videoRef.get();
+const video = {
+  id: doc.id,
+  ...doc.data(),
+} as Video;
+---
+
+<div>
+  <VideoMask video={video} />
+  <div class='h-screen'></div>
+</div>

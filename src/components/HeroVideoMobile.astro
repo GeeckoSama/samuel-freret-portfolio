@@ -1,11 +1,11 @@
 ---
+import type { Videos } from "../utils/interfaces/video.type";
+
 interface Props {
-  videos: {
-    title: string;
-    background: string;
-  }[];
+  videos: Videos;
 }
 
+const cdn = import.meta.env.PUBLIC_IMGIX_DOMAIN;
 const { videos } = Astro.props;
 ---
 
@@ -17,7 +17,7 @@ const { videos } = Astro.props;
           return (
             <div class='swiper-slide relative'>
               <img
-                src={video.background}
+                src={cdn + video.image_cover}
                 alt=''
                 class='h-screen w-auto object-cover'
               />
@@ -29,9 +29,12 @@ const { videos } = Astro.props;
                       {video.title}
                     </h2>
                     <div class='flex justify-center lg:justify-end mt-4 lg:mt-8'>
-                      <button class='px-1.5 py-0.5 border-zinc-950 border-2 text-lg font-bold text-zinc-950 rounded hover:bg-zinc-950 hover:text-zinc-50 transition-colors'>
+                      <a
+                        href={"videos/" + video.id}
+                        class='px-1.5 py-0.5 border-zinc-950 border-2 text-lg font-bold text-zinc-950 rounded hover:bg-zinc-950 hover:text-zinc-50 transition-colors'
+                      >
                         Voir la vidéo
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>

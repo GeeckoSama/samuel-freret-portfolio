@@ -5,6 +5,26 @@ import HeroAlbums from "../components/HeroAlbums.astro";
 import HeroVideo from "../components/HeroVideo.astro";
 import HeroVideoMobile from "../components/HeroVideoMobile.astro";
 import Layout from "../layouts/Layout.astro";
+import { getFirestore } from "firebase-admin/firestore";
+import { app } from "../utils/firebase/server";
+import type { Albums } from "../utils/interfaces/album.type";
+import type { Videos } from "../utils/interfaces/video.type";
+
+const db = getFirestore(app);
+
+const albumsRef = db.collection("albums");
+const albumsSnapshot = await albumsRef.get();
+const albums = albumsSnapshot.docs.map((doc) => ({
+  id: doc.id,
+  ...doc.data(),
+})) as Albums;
+
+const videosRef = db.collection("videos");
+const videosSnapshot = await videosRef.get();
+const videos = videosSnapshot.docs.map((doc) => ({
+  id: doc.id,
+  ...doc.data(),
+})) as Videos;
 ---
 
 <Layout title='Welcome to Astro.'>
@@ -16,48 +36,19 @@ import Layout from "../layouts/Layout.astro";
         categories={["Photographe", "Vidéaste", "Beau gosse"]}
       />
     </section>
-    <section class='snap-center'>
-      <HeroAlbums
-        title='Titre album'
-        description='lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, vestibulum mi nec, ultricies metus. Nulla facilisi'
-        background='https://picsum.photos/1920/1080?random=2'
-      />
-    </section>
+    {
+      albums.map((album) => (
+        <section class='snap-center'>
+          <HeroAlbums album={album} />
+        </section>
+      ))
+    }
+
     <section class='snap-center hidden lg:block'>
-      <HeroVideo
-        videos={[
-          {
-            title: "Vidéo 1",
-            background: "https://picsum.photos/720/540?random=3",
-          },
-          {
-            title: "Vidéo 2",
-            background: "https://picsum.photos/720/540?random=4",
-          },
-          {
-            title: "Vidéo 3",
-            background: "https://picsum.photos/720/540?random=5",
-          },
-        ]}
-      />
+      <HeroVideo videos={videos} />
     </section>
     <section class='snap-center lg:hidden'>
-      <HeroVideoMobile
-        videos={[
-          {
-            title: "Vidéo 1",
-            background: "https://picsum.photos/720/540?random=3",
-          },
-          {
-            title: "Vidéo 2",
-            background: "https://picsum.photos/720/540?random=4",
-          },
-          {
-            title: "Vidéo 3",
-            background: "https://picsum.photos/720/540?random=5",
-          },
-        ]}
-      />
+      <HeroVideoMobile videos={videos} />
     </section>
     <section class='snap-center'>
       <Contact />

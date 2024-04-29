@@ -1,15 +1,17 @@
 ---
+import type { Video } from "../utils/interfaces/video.type";
+
+interface Props {
+  video: Video;
+}
 const cdn = "https://samuel-freret.imgix.net/";
-const video = {
-  path: "./TEASER - COLGATE HOLD UP.mp4",
-  svg_path: "videos/Colgate & holdup/colgate&holdup.svg",
-};
+const { video } = Astro.props;
 ---
 
 <div id='container' class='relative h-[300vh] bg-base-100'>
   <div
     style={{
-      maskImage: `url('${cdn + video.svg_path}')`,
+      maskImage: `url('${cdn + video.svg_mask}')`,
       maskPosition: "center center",
       maskRepeat: "no-repeat",
       maskSize: "50%",
@@ -17,7 +19,7 @@ const video = {
     class='sticky top-0 flex h-screen items-center justify-center overflow-hidden mask'
   >
     <video autoplay muted loop class='h-full w-full object-cover'>
-      <source src={video.path} type='video/mp4' />
+      <source src={video.video} type='video/mp4' />
     </video>
   </div>
 </div>
