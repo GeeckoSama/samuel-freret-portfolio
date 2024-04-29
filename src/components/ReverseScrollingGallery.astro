@@ -13,11 +13,11 @@ const gallery = [
         <div class={index % 2 === 0 ? "column" : "column column-reverse"}>
           {col.map((row) => {
             return (
-              <div class='rounded shadow-md flex flex-col gap-4 p-4 hover:shadow-xl transition-shadow ease-in-out'>
+              <div class='rounded shadow-md flex flex-col gap-4 p-4 hover:shadow-xl hover:scale-110 transition-all ease-in-out'>
                 <img
                   src={"https://picsum.photos/1920/1080?random=" + row}
                   alt=''
-                  class='h-full w-auto object-cover rounded'
+                  class='h-full w-auto object-cover rounded z-0'
                 />
                 <p class='text-lg font-semibold'>Title {row}</p>
               </div>
