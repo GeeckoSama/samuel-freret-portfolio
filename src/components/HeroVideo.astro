@@ -6,7 +6,7 @@ interface Props {
   videos: Videos;
 }
 
-const cdn = import.meta.env.PUBLIC_IMGIX_DOMAIN;
+const cdn = process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
 const { videos } = Astro.props;
 ---
 

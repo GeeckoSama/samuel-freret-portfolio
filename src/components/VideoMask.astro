@@ -4,7 +4,7 @@ import type { Video } from "../utils/interfaces/video.type";
 interface Props {
   video: Video;
 }
-const cdn = "https://samuel-freret.imgix.net/";
+const cdn = process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
 const { video } = Astro.props;
 ---
 
