@@ -11,7 +11,7 @@ const { title, background, categories } = Astro.props;
 <div class='h-screen relative'>
   <img src={background} class='h-full w-auto lg:w-full object-cover' alt='' />
   <div class='absolute inset-0 w-full h-full'>
-    <div
+    <!-- <div
       class='sticky top-[20%] lg:top-[10%] mb-[45%] lg:mb-[23%] mix-blend-difference invert px-12'
     >
       <div
@@ -19,15 +19,15 @@ const { title, background, categories } = Astro.props;
       >
         {title}
       </div>
-    </div>
+    </div> -->
     <div
       class='absolute top-[85%] lg:top-[75%] right-5 lg:right-10 text-end space-y-2 lg:space-y-4 mix-blend-difference invert'
     >
       {
         categories.map((category) => (
-          <div class='text-3xl lg:text-5xl text-zinc-900 font-extrabold uppercase'>
+          <h2 class='text-3xl lg:text-5xl text-zinc-900 font-extrabold uppercase'>
             {category}
-          </div>
+          </h2>
         ))
       }
     </div>

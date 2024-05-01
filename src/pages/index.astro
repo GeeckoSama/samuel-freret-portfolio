@@ -28,7 +28,7 @@ const videos = videosSnapshot.docs.map((doc) => ({
 ---
 
 <Layout title='Welcome to Astro.'>
-  <div class='max-h-screen snap snap-y snap-mandatory overflow-y-scroll'>
+  <!-- <div class='max-h-screen snap snap-y snap-mandatory overflow-y-scroll'>
     <section class='snap-center'>
       <Hero
         title='Samuel Freret'
@@ -53,5 +53,19 @@ const videos = videosSnapshot.docs.map((doc) => ({
     <section class='snap-center'>
       <Contact />
     </section>
-  </div>
+  </div> -->
+  <Hero
+    title='Samuel Freret'
+    background='https://picsum.photos/1920/1080?random=1'
+    categories={["Photographe", "Vidéaste", "Beau gosse"]}
+  />
+  {
+    albums.map((album) => (
+      <section class='snap-center'>
+        <HeroAlbums album={album} />
+      </section>
+    ))
+  }
+  <HeroVideo videos={videos} />
+  <Contact />
 </Layout>

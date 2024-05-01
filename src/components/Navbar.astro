@@ -13,13 +13,67 @@ const cdn =
     <a href='/'>
       <Image
         src={cdn + "logo.png"}
-        width={80}
-        height={48}
+        width={400}
+        height={240}
         layout='fixed'
-        class='h-12 w-20'
+        class='logo object-contain'
         alt='Guilty vision logo'
       />
     </a>
   </div>
   <div></div>
 </div>
+
+<script>
+  // check if the browser supports the scroll-driven animations
+  if (!CSS.supports("animation-timeline", "scroll(root block)")) {
+    /* console.warn(
+      "Browser does not support scroll-driven animations, GSAP will be used instead"
+    ); */
+    const gsap = await import("gsap");
+    const ScrollTrigger = await import("gsap/ScrollTrigger");
+
+    const container = document.querySelector("main");
+    const logo = document.querySelector(".logo");
+
+    if (container && logo) {
+      const context = gsap.gsap.context(() => {
+        gsap.gsap.registerPlugin(ScrollTrigger);
+        gsap.gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: container,
+              start: "top top",
+              end: "+=100%",
+              scrub: true,
+            },
+          })
+          .fromTo(
+            logo,
+            { scale: 1, translateY: "100%" },
+            { scale: 0.2, translateY: "-40%" }
+          );
+      });
+    }
+  }
+</script>
+
+<style>
+  @keyframes logo-shrink {
+    from {
+      transform: scale(1) translate(0, 100%);
+    }
+    50% {
+      transform: scale(0.5) translate(0, 100%);
+    }
+    to {
+      transform: scale(0.2) translate(0, -200%);
+    }
+  }
+
+  .logo {
+    animation: logo-shrink ease-in forwards;
+    animation-timeline: scroll(root block);
+    animation-range: entry 0% entry 20%;
+  }
+</style>
