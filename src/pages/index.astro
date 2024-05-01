@@ -66,6 +66,11 @@ const videos = videosSnapshot.docs.map((doc) => ({
       </section>
     ))
   }
-  <HeroVideo videos={videos} />
+  <section class='hidden lg:block'>
+    <HeroVideo videos={videos} />
+  </section>
+  <section class='lg:hidden'>
+    <HeroVideoMobile videos={videos} />
+  </section>
   <Contact />
 </Layout>

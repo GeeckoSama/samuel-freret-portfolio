@@ -6,7 +6,8 @@ interface Props {
   album: Album;
 }
 
-const cdn = process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
+const cdn =
+  process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
 const { album } = Astro.props;
 ---
 
@@ -14,10 +15,10 @@ const { album } = Astro.props;
   <Image
     src={cdn + album.covers![0]}
     layout='constrained'
-    placeholder="blurhash"
+    placeholder='blurhash'
     height={1080}
     width={1920}
-    class='h-full w-auto object-cover lg:scale-75 lg:shadow-2xl lg:rounded lg:border-8 lg:border-white'
+    class='h-full w-auto object-cover lg:scale-75 lg:shadow-2xl lg:rounded lg:border-8 lg:border-white img-reveal'
     alt=''
   />
   <div class='absolute inset-0 w-full h-full'>
@@ -42,3 +43,22 @@ const { album } = Astro.props;
     </div>
   </div>
 </div>
+
+<style>
+  @keyframes img-reveal {
+    from {
+      filter: blur(25px);
+      opacity: 0;
+    }
+    to {
+      filter: blur(0);
+      opacity: 1;
+    }
+  }
+
+  .img-reveal {
+    animation: img-reveal ease-in forwards;
+    animation-timeline: scroll(root block);
+    animation-range: entry 0% entry 25%;
+  }
+</style>
