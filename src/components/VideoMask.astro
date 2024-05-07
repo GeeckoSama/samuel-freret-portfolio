@@ -4,7 +4,8 @@ import type { Video } from "../utils/interfaces/video.type";
 interface Props {
   video: Video;
 }
-const cdn = process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
+const cdn =
+  process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
 const { video } = Astro.props;
 ---
 
@@ -25,38 +26,30 @@ const { video } = Astro.props;
 </div>
 
 <script>
-  // check if the browser supports the scroll-driven animations
-  if (!CSS.supports("animation-timeline", "scroll(root block)")) {
-    console.warn(
-      "Browser does not support scroll-driven animations, GSAP will be used instead"
-    );
-    const gsap = await import("gsap");
-    const ScrollTrigger = await import("gsap/ScrollTrigger");
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-    const container = document.querySelector("#container");
-    const mask = document.querySelector(".mask");
+  const container = document.querySelector("#container");
+  const mask = document.querySelector(".mask");
 
-    if (container && mask) {
-      const context = gsap.gsap.context(() => {
-        gsap.gsap.registerPlugin(ScrollTrigger);
-        gsap.gsap
-          .timeline({
-            scrollTrigger: {
-              trigger: container,
-              start: "top top",
-              end: "bottom bottom",
-              scrub: true,
-            },
-          })
-          .fromTo(mask, { maskSize: "80%" }, { maskSize: "50000%" });
-      });
-    }
-  } else {
-    console.log("Browser supports scroll-driven animations");
+  if (container && mask) {
+    const context = gsap.context(() => {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: container,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: true,
+          },
+        })
+        .fromTo(mask, { maskSize: "80%" }, { maskSize: "50000%", ease: "power4.in"});
+    });
   }
 </script>
 
-<style>
+<!-- <style>
   @keyframes reveal-video {
     from {
       mask-size: 80%;
@@ -71,4 +64,4 @@ const { video } = Astro.props;
     animation-timeline: scroll(root block);
     animation-range: entry 0% entry 50%;
   }
-</style>
+</style> -->

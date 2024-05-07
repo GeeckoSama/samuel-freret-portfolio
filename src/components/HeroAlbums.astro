@@ -11,14 +11,14 @@ const cdn =
 const { album } = Astro.props;
 ---
 
-<div class='h-screen relative'>
+<div class='h-screen relative hero'>
   <Image
     src={cdn + album.covers![0]}
     layout='constrained'
     placeholder='blurhash'
     height={1080}
     width={1920}
-    class='h-full w-auto object-cover lg:scale-75 lg:shadow-2xl lg:rounded lg:border-8 lg:border-white img-reveal'
+    class='h-full w-auto object-cover lg:scale-75 lg:shadow-2xl lg:rounded lg:border-8 lg:border-white img-in'
     alt=''
   />
   <div class='absolute inset-0 w-full h-full'>
@@ -44,7 +44,35 @@ const { album } = Astro.props;
   </div>
 </div>
 
-<style>
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  const container = document.querySelector(".hero");
+  const img = document.querySelector(".img-in");
+
+  if (container && img) {
+    const context = gsap.context(() => {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: container,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        })
+        .fromTo(
+          img,
+          { opacity: 0, filter: "blur(25px)" },
+          { opacity: 1, filter: "blur(0)", ease: "power4.in" }
+        );
+    });
+  }
+</script>
+
+<!-- <style>
   @keyframes img-reveal {
     from {
       filter: blur(25px);
@@ -61,4 +89,4 @@ const { album } = Astro.props;
     animation-timeline: scroll(root block);
     animation-range: entry 0% entry 25%;
   }
-</style>
+</style> -->

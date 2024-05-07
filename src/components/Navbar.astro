@@ -16,6 +16,7 @@ const cdn =
         width={400}
         height={240}
         layout='fixed'
+        priority={true}
         class='logo object-contain'
         alt='Guilty vision logo'
       />
@@ -25,40 +26,34 @@ const cdn =
 </div>
 
 <script>
-  // check if the browser supports the scroll-driven animations
-  if (!CSS.supports("animation-timeline", "scroll(root block)")) {
-    /* console.warn(
-      "Browser does not support scroll-driven animations, GSAP will be used instead"
-    ); */
-    const gsap = await import("gsap");
-    const ScrollTrigger = await import("gsap/ScrollTrigger");
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-    const container = document.querySelector("main");
-    const logo = document.querySelector(".logo");
+  const container = document.querySelector("main");
+  const logo = document.querySelector(".logo");
 
-    if (container && logo) {
-      const context = gsap.gsap.context(() => {
-        gsap.gsap.registerPlugin(ScrollTrigger);
-        gsap.gsap
-          .timeline({
-            scrollTrigger: {
-              trigger: container,
-              start: "top top",
-              end: "+=100%",
-              scrub: true,
-            },
-          })
-          .fromTo(
-            logo,
-            { scale: 1, translateY: "100%" },
-            { scale: 0.2, translateY: "-40%" }
-          );
-      });
-    }
+  if (container && logo) {
+    const context = gsap.context(() => {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: container,
+            start: "top top",
+            end: "+=100%",
+            scrub: true,
+          },
+        })
+        .fromTo(
+          logo,
+          { scale: 1, translateY: "100%" },
+          { scale: 0.2, translateY: "-40%" }
+        );
+    });
   }
 </script>
 
-<style>
+<!-- <style>
   @keyframes logo-shrink {
     from {
       transform: scale(1) translate(0, 100%);
@@ -76,4 +71,4 @@ const cdn =
     animation-timeline: scroll(root block);
     animation-range: entry 0% entry 20%;
   }
-</style>
+</style> -->
