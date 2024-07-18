@@ -1,11 +1,13 @@
 ---
 import type { Videos } from "../utils/interfaces/video.type";
+import { Image } from "@unpic/astro";
 
 interface Props {
   videos: Videos;
 }
 
-const cdn = process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
+const cdn =
+  process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
 const { videos } = Astro.props;
 ---
 
@@ -16,22 +18,23 @@ const { videos } = Astro.props;
         videos.map((video) => {
           return (
             <div class='swiper-slide relative'>
-              <img
+              <Image
                 src={cdn + video.image_cover}
+                layout='constrained'
+                background='auto'
                 alt=''
                 class='h-screen w-auto object-cover'
               />
-              <div class='swiper-lazy-preloader' />
-              <div class='absolute inset-0 w-full h-full'>
+              <div class='absolute inset-0 w-full h-full z-20'>
                 <div class='sticky top-[85%] mt-[50%] lg:mt-[10%] mb-[20%] lg:mb-[10%] px-0 lg:px-12'>
-                  <div class='bg-white/60 backdrop-blur-xl lg:rounded shadow-md max-w-lg p-4 hover:bg-white/90 transition-colors'>
-                    <h2 class='text-3xl lg:text-4xl text-zinc-900 font-bold mb-4 lg:mb-8'>
+                  <div class='max-w-lg p-4 mix-blend-difference invert'>
+                    <h2 class='text-4xl lg:text-5xl text-black font-bold mb-4 lg:mb-8 underline'>
                       {video.title}
                     </h2>
                     <div class='flex justify-center lg:justify-end mt-4 lg:mt-8'>
                       <a
                         href={"videos/" + video.id}
-                        class='px-1.5 py-0.5 border-zinc-950 border-2 text-lg font-bold text-zinc-950 rounded hover:bg-zinc-950 hover:text-zinc-50 transition-colors'
+                        class='px-2.5 py-1.5 border-zinc-950 border-2 text-xl font-bold text-zinc-950 rounded hover:bg-zinc-950 hover:text-zinc-50 transition-colors cursor-pointer'
                       >
                         Voir la vidéo
                       </a>
