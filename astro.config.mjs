@@ -9,7 +9,7 @@ export default defineConfig({
   output: "server",
   integrations: [tailwind()],
   image: {
-    service: imageService()
+    service: imageService(),
   },
-  adapter: vercel()
+  adapter: vercel(),
 });

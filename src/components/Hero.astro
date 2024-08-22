@@ -1,92 +1,191 @@
 ---
 import { Image } from "@unpic/astro";
-interface Props {
-  title: string;
-  background: string;
-  categories: string[];
-}
 
 const cdn =
   process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
-const { title, background, categories } = Astro.props;
 ---
 
-<div class='h-screen relative hero'>
+<div
+  class='relative motion-reduce:h-screen h-[300vh] hero-container'
+  id='hero-container'
+>
   <Image
-    src={cdn + background}
-    layout="constrained"
-    background="auto"
+    src='https://samuel-freret.imgix.net/logo.png'
+    layout='fullWidth'
     priority={true}
-    class='h-full w-auto lg:w-full object-cover img-out'
-    alt=''
+    class='motion-reduce:absolute sticky top-[10%] pb-[10%] w-full md:max-w-96 mx-auto z-10 logo'
   />
-  <div class='absolute inset-0 w-full h-full'>
-    <!-- <div
-      class='sticky top-[20%] lg:top-[10%] mb-[45%] lg:mb-[23%] mix-blend-difference invert px-12'
-    >
-      <div
-        class='text-center text-7xl lg:text-9xl text-zinc-950 font-black uppercase'
-      >
-        {title}
-      </div>
-    </div> -->
+  <video
+    autoplay={true}
+    muted={true}
+    disablepictureinpicture={true}
+    playsinline={true}
+    loop={true}
+    class='w-full h-screen object-cover motion-safe:sticky top-0 cover z-0 shadow-2xl'
+  >
+    <source
+      media='(max-width: 768px)'
+      src='./SHOWREEL720_2.mp4'
+      type='video/mp4'
+    />
+    <source src='./SHOWREEL1080.mp4' type='video/mp4' />
+  </video>
+  <div class='sticky top-[80%] bottom-24 w-full mix-blend-difference invert'>
     <div
-      class='absolute top-[75%] right-5 lg:right-10 text-end space-y-2 lg:space-y-4 mix-blend-difference invert'
+      class='flex mx-auto w-10 h-12 justify-center items-end text-primary-light border-primary-light border-2 rounded-2xl'
     >
-      {
-        categories.map((category) => (
-          <h2 class='text-3xl lg:text-5xl text-zinc-900 font-extrabold uppercase'>
-            {category}
-          </h2>
-        ))
-      }
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        fill='none'
+        viewBox='0 0 24 24'
+        stroke-width='2.5'
+        stroke='currentColor'
+        class='size-6 animate-bounce'
+      >
+        <path
+          stroke-linecap='round'
+          stroke-linejoin='round'
+          d='m4.5 5.25 7.5 7.5 7.5-7.5m-15 6 7.5 7.5 7.5-7.5'></path>
+      </svg>
     </div>
   </div>
 </div>
 
 <script>
-  import { gsap } from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  if (!CSS.supports("animation-timeline", "scroll()")) {
+    console.log(
+      "animation-timeline: scroll() is not supported switch with GSAP"
+    );
+    const { gsap } = await import("gsap");
+    const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+    gsap.registerPlugin(ScrollTrigger);
 
-  const container = document.querySelector(".hero");
-  const img = document.querySelector(".img-out");
+    gsap.fromTo(
+      ".cover",
+      {
+        scale: 0.8,
+        borderRadius: "40px",
+        border: "4px solid #fafafa",
+        y: "100vh",
+      },
+      {
+        y: 0,
+        scrollTrigger: {
+          trigger: ".hero-container",
+          start: "top bottom",
+          end: "top 25%",
+          scrub: true,
+        },
+      }
+    );
 
-  if (container && img) {
-    const context = gsap.context(() => {
-      gsap.registerPlugin(ScrollTrigger);
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: container,
-            start: "top top",
-            end: "+=80%",
-            scrub: true,
-          },
-        })
-        .fromTo(
-          img,
-          { opacity: 1, filter: "blur(0)" },
-          { opacity: 0.5, filter: "blur(25px)", ease: "power4.in"}
-        );
+    gsap.to(".cover", {
+      scale: 0.85,
+      borderRadius: "35px",
+      border: "2px solid #fafafa",
+      scrollTrigger: {
+        trigger: ".hero-container",
+        start: "top 25%",
+        end: "bottom 50%",
+        scrub: true,
+      },
     });
+
+    gsap.to(".cover", {
+      scale: 1,
+      borderRadius: "0px",
+      border: "none",
+      scrollTrigger: {
+        trigger: ".cover",
+        start: "top 50%",
+        end: "bottom 0%",
+        scrub: true,
+      },
+    });
+
+    gsap.fromTo(
+      ".logo",
+      {
+        scale: 0.8,
+        y: "25vh",
+      },
+      {
+        scale: 1,
+        y: 0,
+        scrollTrigger: {
+          trigger: ".hero-container",
+          start: "top 75%",
+          end: "top 25%",
+          scrub: true,
+        },
+      }
+    );
   }
 </script>
 
-<!-- <style>
-  @keyframes img-disappear {
-    from {
-      filter: blur(0);
-      opacity: 1;
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    @supports not (animation-timeline: scroll()) {
+      .cover {
+        scale: 0.8;
+        border-radius: 40px;
+        border: 4px solid #fafafa;
+        transform: translateY(100vh);
+      }
+
+      .logo {
+        scale: 0.8;
+        transform: translateY(25vh);
+      }
     }
-    to {
-      filter: blur(25px);
-      opacity: 0.5;
+    @supports (animation-timeline: scroll()) {
+      .cover {
+        animation: resizeVideo ease-in both;
+        animation-timeline: scroll();
+        animation-range: entry 0% entry 20%;
+      }
+
+      .logo {
+        animation: resizeLogo ease-in both;
+        animation-timeline: scroll();
+        animation-range: entry 0% entry 20%;
+      }
     }
   }
 
-  .img-out {
-    animation: img-disappear ease-in forwards;
-    animation-timeline: scroll(root block);
-    animation-range: entry 0% entry 50%;
+  @keyframes resizeVideo {
+    from {
+      scale: 0.8;
+      border-radius: 40px;
+      border: 4px solid #fafafa;
+      transform: translateY(100vh);
+    }
+    25% {
+      transform: translateY(0);
+    }
+    50% {
+      scale: 0.85;
+      border-radius: 35px;
+      border: 2px solid #fafafa;
+    }
+    to {
+      scale: 1;
+      border-radius: 0px;
+      border: none;
+    }
   }
-</style> -->
+
+  @keyframes resizeLogo {
+    from {
+      scale: 0.8;
+      transform: translateY(25vh);
+    }
+    25% {
+      scale: 0.8;
+      transform: translateY(0);
+    }
+    to {
+      scale: 1;
+    }
+  }
+</style>

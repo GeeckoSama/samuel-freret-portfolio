@@ -1,76 +1,51 @@
 ---
-import Contact from "../components/Contact.astro";
-import Hero from "../components/Hero.astro";
-import HeroAlbums from "../components/HeroAlbums.astro";
-import HeroVideo from "../components/HeroVideo.astro";
-import HeroVideoMobile from "../components/HeroVideoMobile.astro";
-import Layout from "../layouts/Layout.astro";
 import { getFirestore } from "firebase-admin/firestore";
+import Hero from "../components/Hero.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import Layout from "../layouts/Layout.astro";
 import { app } from "../utils/firebase/server";
-import type { Albums } from "../utils/interfaces/album.type";
-import type { Videos } from "../utils/interfaces/video.type";
+import type { Projects } from "../utils/interfaces/project.type";
+import Contact from "../components/Contact.astro";
+import FlipText from "../components/FlipText.astro";
 
 const db = getFirestore(app);
 
-const albumsRef = db.collection("albums");
-const albumsSnapshot = await albumsRef.get();
-const albums = albumsSnapshot.docs.map((doc) => ({
+const projectstRef = db.collection("videos");
+const projectsSnapshot = await projectstRef.get();
+const projects = projectsSnapshot.docs.map((doc) => ({
   id: doc.id,
   ...doc.data(),
-})) as Albums;
-
-const videosRef = db.collection("videos");
-const videosSnapshot = await videosRef.get();
-const videos = videosSnapshot.docs.map((doc) => ({
-  id: doc.id,
-  ...doc.data(),
-})) as Videos;
+})) as Projects;
+/* for (let index = 0; index < 20; index++) {
+  projects.push(projects[0]);
+  
+} */
 ---
 
-<Layout title='Welcome to Astro.'>
-  <div class='max-h-screen snap snap-y snap-mandatory overflow-y-scroll'>
-    <section class='snap-center'>
-      <Hero
-      title='Samuel Freret'
-      background='P1038054.jpg'
-      categories={["Photographe", "Vidéaste", "Beau gosse"]}  
-      />
-    </section>
-    {
-      albums.map((album) => (
-        <section class='snap-center'>
-          <HeroAlbums album={album} />
-        </section>
-      ))
-    }
-
-    <section class='snap-center hidden lg:block'>
-      <HeroVideo videos={videos} />
-    </section>
-    <section class='snap-center lg:hidden'>
-      <HeroVideoMobile videos={videos} />
-    </section>
-    <section class='snap-center'>
-      <Contact />
-    </section>
-  </div>
-  <!-- <Hero
-    title='Samuel Freret'
-    background='P1038054.jpg'
-    categories={["Photographe", "Vidéaste", "Beau gosse"]}
-  />
-  {
-    albums.map((album) => (
-      <section class='snap-center'>
-        <HeroAlbums album={album} />
-      </section>
-    ))
-  }
-  <section class='hidden lg:block'>
-    <HeroVideo videos={videos} />
+<Layout title='Guilty Vision'>
+  <Hero />
+  <section class='h-[80vh] flex flex-col items-center justify-center'>
+    <div>
+      <h2
+        class='text-5xl xl:text-8xl text-center text-primary-light dark:text-primary-dark font-black text-wrap p-4 mb-8 uppercase'
+      >
+        Samuel Freret
+      </h2>
+      <FlipText labels={["Monteur", "Post-production", "Réalisation"]} />
+    </div>
   </section>
-  <section class='lg:hidden'>
-    <HeroVideoMobile videos={videos} />
+  <section class='py-24'>
+    <div
+      class='grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8 p-2 md:p-4 lg:p-8'
+    >
+      {
+        projects.map((project) => (
+          <div class='col-span-1 last:odd:col-span-2'>
+            <ProjectCard project={project} />
+          </div>
+        ))
+      }
+    </div>
+    <Contact />
   </section>
-  <Contact /> -->
 </Layout>
