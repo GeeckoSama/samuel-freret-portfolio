@@ -1,24 +1,12 @@
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
-  apiKey:
-    process.env.PUBLIC_FIREBASE_API_KEY ||
-    import.meta.env.PUBLIC_FIREBASE_API_KEY,
-  authDomain:
-    process.env.PUBLIC_FIREBASE_AUTH_DOMAIN ||
-    import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId:
-    process.env.PUBLIC_FIREBASE_PROJECT_ID ||
-    import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket:
-    process.env.PUBLIC_FIREBASE_STORAGE_BUCKET ||
-    import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId:
-    process.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID ||
-    import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId:
-    process.env.PUBLIC_FIREBASE_APP_ID ||
-    import.meta.env.PUBLIC_FIREBASE_APP_ID,
+  apiKey: "AIzaSyAbjKbi4grjfEO7y148qAWAyhAKtToVCuk",
+  authDomain: "samuel-freret-portfolio.firebaseapp.com",
+  projectId: "samuel-freret-portfolio",
+  storageBucket: "samuel-freret-portfolio.appspot.com",
+  messagingSenderId: "1039550519253",
+  appId: "1:1039550519253:web:adcbc98f69d375c9cbcf5c",
 };
 
 export const app = initializeApp(firebaseConfig);

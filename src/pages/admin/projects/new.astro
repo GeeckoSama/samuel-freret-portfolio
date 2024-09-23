@@ -1,0 +1,284 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title='Nouveau projet'>
+  <div class='lg:card lg:bg-base-200 mx-auto overflow-x-auto lg:max-w-5xl'>
+    <diV class='lg:card-body'>
+      <form
+        action='/api/project'
+        method='post'
+        enctype='multipart/form-data'
+        class='flex flex-col gap-4'
+      >
+        <label class='input input-bordered flex items-center gap-2'>
+          Titre
+          <input
+            name='title'
+            type='text'
+            class='grow'
+            placeholder=''
+            required
+          />
+        </label>
+
+        <textarea
+          name='description'
+          class='textarea textarea-bordered'
+          placeholder='Résumé...'></textarea>
+
+        <label class='input input-bordered flex items-center gap-2'>
+          Crédits
+          <input
+            name='credits'
+            type='text'
+            class='grow'
+            placeholder='Samuel Freret, Camille Provost'
+            required
+          />
+        </label>
+
+        <div class='flex flex-col lg:flex-row gap-4 justify-between'>
+          <label class='input input-bordered flex items-center gap-2'>
+            Localisation
+            <input
+              name='localisations'
+              type='text'
+              class='grow'
+              placeholder='Bordeaux'
+            />
+          </label>
+
+          <label class='input input-bordered flex items-center gap-2'>
+            Date de production
+            <input name='production_date' type='date' class='grow' required />
+          </label>
+        </div>
+
+        <div class='flex flex-col lg:flex-row gap-8 justify-between'>
+          <div>
+            <div class='w-full h-60 bg-base-300 rounded-box'>
+              <img
+                id='preview-cover'
+                src='https://placehold.co/600x400?text=Couverture'
+                alt=''
+                class='h-full w-full object-cover mx-auto rounded-box'
+              />
+            </div>
+            <label class='form-control w-full'>
+              <div class='label'>
+                <span class='label-text'>Fichier de couverture</span>
+              </div>
+              <input
+                id='cover-input'
+                name='image_cover'
+                type='file'
+                accept='image/*'
+                required
+                class='file-input file-input-bordered w-full'
+              />
+            </label>
+          </div>
+
+          <div>
+            <div class='w-full h-60 bg-base-300 rounded-box'>
+              <img
+                id='preview-mask'
+                src='https://placehold.co/600x400?text=Masque'
+                alt=''
+                class='h-full w-full object-cover mx-auto rounded-box'
+              />
+            </div>
+            <label class='form-control w-full'>
+              <div class='label'>
+                <span class='label-text'>Fichier du masque</span>
+              </div>
+              <input
+                id='mask-input'
+                name='svg_mask'
+                type='file'
+                accept='image/*'
+                required
+                class='file-input file-input-bordered w-full'
+              />
+            </label>
+          </div>
+        </div>
+
+        <label class='form-control w-full'>
+          <div class='label'>
+            <span class='label-text'>Fichier vidéo</span>
+          </div>
+          <input
+            name='video'
+            id='video-input'
+            type='file'
+            accept='video/*'
+            required
+            class='file-input file-input-bordered w-full'
+          />
+          <progress
+            id='video-progress'
+            class='progress progress-primary w-full mt-2'
+            value='0'
+            max='100'></progress>
+        </label>
+
+        <button type='submit' class='btn btn-primary mt-10'>Enregistrer</button>
+      </form>
+    </diV>
+  </div></AdminLayout
+>
+
+<script>
+  import {
+    getDownloadURL,
+    getStorage,
+    ref,
+    uploadBytes,
+    uploadBytesResumable,
+    type UploadResult,
+  } from "firebase/storage";
+  import { NewProjectSchema } from "../../../utils/interfaces/project.type";
+  import { app } from "../../../utils/firebase/client";
+
+  const coverInput = document.getElementById("cover-input") as HTMLInputElement;
+  const coverPreview = document.getElementById(
+    "preview-cover"
+  ) as HTMLImageElement;
+  const maskInput = document.getElementById("mask-input") as HTMLInputElement;
+  const maskPreview = document.getElementById(
+    "preview-mask"
+  ) as HTMLImageElement;
+  const videoInput = document.getElementById("video-input") as HTMLInputElement;
+  const videoProgress = document.getElementById(
+    "video-progress"
+  ) as HTMLProgressElement;
+
+  coverInput?.addEventListener("change", () => {
+    const file = coverInput.files?.[0];
+    if (!file) {
+      coverPreview.src = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      coverPreview.src = reader.result!.toString();
+    };
+  });
+
+  maskInput?.addEventListener("change", () => {
+    const file = maskInput.files?.[0];
+    if (!file) {
+      maskPreview.src = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      maskPreview.src = reader.result!.toString();
+    };
+  });
+
+  const form = document.querySelector("form") as HTMLFormElement;
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    console.log("Start upload...");
+
+    const formData = new FormData(form);
+    const title = formData.get("title")?.toString();
+    const description = formData.get("description")?.toString();
+    const credits = formData.get("credits")?.toString();
+    const localisations = formData.get("localisations")?.toString();
+    const production_date = formData.get("production_date")?.toString();
+    const image_cover = coverInput.files?.[0];
+    const video = videoInput.files?.[0];
+    const svg_mask = maskInput.files?.[0];
+
+    const result = NewProjectSchema.safeParse({
+      title,
+      description,
+      credits,
+      localisations,
+      production_date: new Date(production_date ?? "").getTime(),
+      image_cover,
+      video,
+      svg_mask,
+      create_at: new Date().getTime(),
+      update_at: new Date().getTime(),
+    });
+
+    if (!result.success) {
+      console.log(result.error);
+      return;
+    }
+
+    console.log(result.data);
+
+    const storage = getStorage(app);
+
+    const coverRef = ref(
+      storage,
+      `projects/${title}/cover.${image_cover?.type.split("/")[1]}`
+    );
+    const maskRef = ref(
+      storage,
+      `projects/${title}/mask.${svg_mask?.type.split("/")[1]}`
+    );
+    const videoRef = ref(
+      storage,
+      `projects/${title}/video.${video?.type.split("/")[1]}`
+    );
+
+    const promises: Promise<UploadResult>[] = [];
+    if (image_cover) {
+      promises.push(uploadBytes(coverRef, image_cover));
+    }
+    if (svg_mask) {
+      promises.push(uploadBytes(maskRef, svg_mask));
+    }
+
+    console.log("Uploading images...");
+    const imagesResult = await Promise.all(promises);
+    console.log("Finish to uploading images, ", imagesResult);
+
+    if (video) {
+      console.log("Uploading video...");
+      const videoResult = uploadBytesResumable(videoRef, video);
+      videoResult.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          videoProgress.value = progress;
+          console.log(progress);
+        },
+        (error) => {
+          console.log(error);
+        },
+        async () => {
+          console.log("Finish to uploading video");
+          const videoURL = await getDownloadURL(videoRef);
+          console.log("Uploading project...");
+          const response = await fetch("/api/project", {
+            method: "POST",
+            body: JSON.stringify({
+              ...result.data,
+              image_cover: imagesResult[0].ref.fullPath,
+              svg_mask: imagesResult[1].ref.fullPath,
+              video: videoURL,
+            }),
+          });
+          if (response.redirected) {
+            window.location.assign(response.url);
+          } else {
+            alert("Erreur lors de la connexion, " + response.statusText);
+          }
+        }
+      );
+    }
+  });
+</script>

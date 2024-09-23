@@ -1,33 +1,30 @@
 import type { APIRoute } from "astro";
 import { app } from "../../../utils/firebase/server";
 import { getFirestore } from "firebase-admin/firestore";
+import { ProjectSchema } from "../../../utils/interfaces/project.type";
 
 const db = getFirestore(app);
-const albumsRef = db.collection("albums");
+const projectsRef = db.collection("projects");
 
 export const POST: APIRoute = async ({ params, redirect, request }) => {
   const formData = await request.formData();
-  const name = formData.get("name")?.toString();
-  const age = formData.get("age")?.toString();
-  const isBestFriend = formData.get("isBestFriend") === "on";
+  const result = ProjectSchema.safeParse(formData.values());
 
-  if (!name || !age) {
-    return new Response("Missing required fields", {
+  if (!result.success) {
+    return new Response(result.error.toString(), {
       status: 400,
     });
   }
 
   if (!params.id) {
-    return new Response("Cannot find friend", {
+    return new Response("Cannot find project", {
       status: 404,
     });
   }
 
   try {
-    await albumsRef.doc(params.id).update({
-      name,
-      age: parseInt(age),
-      isBestFriend,
+    await projectsRef.doc(params.id).update({
+      ...result.data,
     });
   } catch (error) {
     return new Response("Something went wrong", {
@@ -39,13 +36,13 @@ export const POST: APIRoute = async ({ params, redirect, request }) => {
 
 export const DELETE: APIRoute = async ({ params, redirect }) => {
   if (!params.id) {
-    return new Response("Cannot find friend", {
+    return new Response("Cannot find project", {
       status: 404,
     });
   }
 
   try {
-    await albumsRef.doc(params.id).delete();
+    await projectsRef.doc(params.id).delete();
   } catch (error) {
     return new Response("Something went wrong", {
       status: 500,

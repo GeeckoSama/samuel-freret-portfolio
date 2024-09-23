@@ -3,8 +3,8 @@ import { Image } from "@unpic/astro";
 import type { Project } from "../utils/interfaces/project.type";
 
 interface Props {
-    project: Project;
-  }
+  project: Project;
+}
 
 const cdn =
   process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
@@ -12,7 +12,7 @@ const cdn =
 const { project } = Astro.props;
 ---
 
-<section>
+<!-- <section>
   <h1
       class="text-3xl xl:text-6xl max-w-5xl font-bold text-primary-light dark:text-primary-dark capitalize"
     >
@@ -46,4 +46,21 @@ const { project } = Astro.props;
       </svg>
     </div></a>
     
-</section>
+</section> -->
+<a
+  href={`/projects/${project.id}`}
+  class='card bg-base-200 xs:image-full w-full shadow-md hover:shadow-xl transition-all scale-95 hover:scale-100 ease-in duration-200'
+>
+  <figure>
+    <Image
+      src={cdn + project.image_cover}
+      layout='fullWidth'
+      class='w-auto h-[512px] object-cover object-center'
+    />
+  </figure>
+  <div class='card-body'>
+    <h2 class='card-title text-5xl font-bold uppercase'>
+      {project.title}
+    </h2>
+  </div>
+</a>

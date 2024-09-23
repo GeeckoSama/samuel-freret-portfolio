@@ -1,0 +1,30 @@
+---
+import { Image } from "@unpic/astro";
+
+const { path } = Astro.params;
+---
+
+<div class='navbar bg-base-100 shadow-lg'>
+  <div class='flex-1 lg:flex-none'>
+    <a href='/' class='btn btn-ghost'>
+      <Image
+        src='https://samuel-freret.imgix.net/logo.png'
+        layout='constrained'
+        priority={true}
+        class='h-10 w-auto mx-auto'
+      />
+    </a>
+    <h1 class='hidden lg:flex text-xl font-bold'>Panneau d'administration</h1>
+  </div>
+  <div class='hidden lg:flex flex-1 justify-center'>
+    <div role='tablist' class='tabs tabs-bordered'>
+      <a href='/admin/projects' role='tab' class='tab'>Projets</a>
+      <a href='/admin/albums' role='tab' class='tab'>Albums</a>
+      <a href='/admin' role='tab' class='tab'>Paramètres</a>
+    </div>
+    {path}
+  </div>
+  <div class='flex-none'>
+    <a href='/api/auth/signout' class='btn btn-ghost'> Se déconnecter </a>
+  </div>
+</div>

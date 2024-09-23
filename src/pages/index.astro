@@ -16,10 +16,6 @@ const projects = projectsSnapshot.docs.map((doc) => ({
   id: doc.id,
   ...doc.data(),
 })) as Projects;
-/* for (let index = 0; index < 20; index++) {
-  projects.push(projects[0]);
-  
-} */
 ---
 
 <Layout title='Guilty Vision'>
@@ -27,7 +23,7 @@ const projects = projectsSnapshot.docs.map((doc) => ({
   <section class='h-[80vh] flex flex-col items-center justify-center'>
     <div>
       <h2
-        class='text-5xl xl:text-8xl text-center text-primary-light dark:text-primary-dark font-black text-wrap p-4 mb-8 uppercase'
+        class='text-5xl xl:text-8xl text-center text-base-content font-black text-wrap p-4 mb-8 uppercase'
       >
         Samuel Freret
       </h2>

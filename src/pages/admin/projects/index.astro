@@ -1,0 +1,76 @@
+---
+import { getFirestore } from "firebase-admin/firestore";
+import { app } from "../../../utils/firebase/server";
+import type { Projects } from "../../../utils/interfaces/project.type";
+import { Image } from "@unpic/astro";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+
+const db = getFirestore(app);
+
+const projectstRef = db.collection("projects");
+const projectsSnapshot = await projectstRef.get();
+const projects = projectsSnapshot.docs.map((doc) => ({
+  id: doc.id,
+  ...doc.data(),
+})) as Projects;
+
+const CDN =
+  process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
+---
+
+<AdminLayout title='Projets'>
+  <div class='card bg-base-200 container mx-auto overflow-x-auto'>
+    <table class='table'>
+      <thead class='text-center font-bold text-lg bg-base-300'>
+        <tr>
+          <th>Cover</th>
+          <th>Titre</th>
+          <th>Vidéo</th>
+          <th>Mask</th>
+          <th>
+            <a href='./projects/new' class='btn btn-outline btn-primary'>
+              Ajouter
+            </a>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          projects.map((project) => (
+            <tr class='hover:bg-base-300'>
+              <th>
+                <Image
+                  src={CDN + project.image_cover}
+                  layout='constrained'
+                  priority={true}
+                  class='h-10 w-auto mx-auto rounded-md'
+                />
+              </th>
+              <td>{project.title}</td>
+              <td>
+                <a href={project.video} target='_blank' class='link'>
+                  lien vers la vidéo
+                </a>
+              </td>
+              <td>
+                <a href={CDN + project.svg_mask} class='link'>
+                  <Image
+                    src={CDN + project.svg_mask}
+                    layout='constrained'
+                    priority={true}
+                    class='h-10 w-auto mx-auto bg-base-300 rounded-md'
+                  />
+                </a>
+              </td>
+              <td>
+                <a href={"./projects/" + project.id} class='btn btn-ghost'>
+                  edit
+                </a>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>
