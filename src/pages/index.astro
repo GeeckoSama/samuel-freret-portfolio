@@ -10,7 +10,7 @@ import FlipText from "../components/FlipText.astro";
 
 const db = getFirestore(app);
 
-const projectstRef = db.collection("videos");
+const projectstRef = db.collection("projects");
 const projectsSnapshot = await projectstRef.get();
 const projects = projectsSnapshot.docs.map((doc) => ({
   id: doc.id,

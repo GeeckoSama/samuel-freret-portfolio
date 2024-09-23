@@ -7,12 +7,21 @@ import Layout from "../../layouts/Layout.astro";
 
 const db = getFirestore(app);
 const { id } = Astro.params;
-const projecttRef = db.doc(`videos/${id}`);
+const projecttRef = db.doc(`projects/${id}`);
 const projectSnapshot = await projecttRef.get();
 const project = {
   id: projectSnapshot.id,
   ...projectSnapshot.data(),
 } as Project;
+
+const formatDate = (date: number) => {
+  const dateObject = new Date(date);
+  return dateObject.toLocaleDateString("fr-FR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 ---
 
 <Layout title={project.title}>
@@ -28,7 +37,7 @@ const project = {
         <h3
           class='text-lg italic text-end pb-4 text-primary-light dark:text-primary-dark'
         >
-          {project.production_date} -
+          {formatDate(project.production_date)} -
           {project.localisations}
         </h3>
         <p class='text-xl text-primary-light dark:text-primary-dark'>
@@ -40,16 +49,11 @@ const project = {
         <h3
           class='text-lg italic text-end pb-4 text-primary-light dark:text-primary-dark'
         >
-          {
-            project.credits.map((credit, index) => (
-              <span>
-                {credit}
-                {index < project.credits.length - 1 ? ", " : ""}
-              </span>
-            ))
-          }
+          {project.credits}
         </h3>
       </div>
     </div>
   </div>
 </Layout>
+
+<script></script>
