@@ -17,10 +17,6 @@ export type Project = {
 export type Projects = Project[];
 
 export const ProjectSchema = z.object({
-  id: z.string({
-    invalid_type_error: "L'id doit être une chaîne de caractères",
-    required_error: "L'id est obligatoire",
-  }),
   title: z.string({
     required_error: "Le titre est obligatoire",
     invalid_type_error: "Le titre doit être une chaîne de caractères",

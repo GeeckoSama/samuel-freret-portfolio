@@ -25,7 +25,8 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
         <textarea
           name='description'
           class='textarea textarea-bordered'
-          placeholder='Résumé...'></textarea>
+          placeholder='Résumé...'
+          rows='10'></textarea>
 
         <label class='input input-bordered flex items-center gap-2'>
           Crédits
@@ -59,7 +60,7 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
           <div>
             <div class='w-full h-60 bg-base-300 rounded-box'>
               <img
-                id='preview-cover'
+                id='cover-preview'
                 src='https://placehold.co/600x400?text=Couverture'
                 alt=''
                 class='h-full w-full object-cover mx-auto rounded-box'
@@ -83,7 +84,7 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
           <div>
             <div class='w-full h-60 bg-base-300 rounded-box'>
               <img
-                id='preview-mask'
+                id='mask-preview'
                 src='https://placehold.co/600x400?text=Masque'
                 alt=''
                 class='h-full w-full object-cover mx-auto rounded-box'
@@ -121,7 +122,8 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
             id='video-progress'
             class='progress progress-primary w-full mt-2'
             value='0'
-            max='100'></progress>
+            max='100'
+            hidden></progress>
         </label>
 
         <button type='submit' class='btn btn-primary mt-10'>Enregistrer</button>
@@ -137,102 +139,141 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
     ref,
     uploadBytes,
     uploadBytesResumable,
-    type UploadResult,
+    type FirebaseStorage,
   } from "firebase/storage";
   import { NewProjectSchema } from "../../../utils/interfaces/project.type";
   import { app } from "../../../utils/firebase/client";
 
   const coverInput = document.getElementById("cover-input") as HTMLInputElement;
-  const coverPreview = document.getElementById(
-    "preview-cover"
-  ) as HTMLImageElement;
+  coverInput.addEventListener("change", (event) =>
+    handleFileInputChange(event)
+  );
   const maskInput = document.getElementById("mask-input") as HTMLInputElement;
-  const maskPreview = document.getElementById(
-    "preview-mask"
-  ) as HTMLImageElement;
-  const videoInput = document.getElementById("video-input") as HTMLInputElement;
-  const videoProgress = document.getElementById(
-    "video-progress"
-  ) as HTMLProgressElement;
+  maskInput.addEventListener("change", (event) => handleFileInputChange(event));
 
-  coverInput?.addEventListener("change", () => {
-    const file = coverInput.files?.[0];
+  function handleFileInputChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.item(0);
+    const preview = document.getElementById(
+      input.id.replace("input", "preview")
+    ) as HTMLImageElement;
     if (!file) {
-      coverPreview.src = "";
+      preview.src = `https://placehold.co/600x400?text=${input.id === "cover-input" ? "Couverture" : "Masque"}`;
       return;
     }
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      coverPreview.src = reader.result!.toString();
+      preview.src = reader.result?.toString() ?? "";
     };
-  });
-
-  maskInput?.addEventListener("change", () => {
-    const file = maskInput.files?.[0];
-    if (!file) {
-      maskPreview.src = "";
-      return;
-    }
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      maskPreview.src = reader.result!.toString();
-    };
-  });
+  }
 
   const form = document.querySelector("form") as HTMLFormElement;
-  form.addEventListener("submit", async (event) => {
+  form.addEventListener("submit", handleSubmit);
+
+  async function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
 
     console.log("Start upload...");
 
-    const formData = new FormData(form);
-    const title = formData.get("title")?.toString();
-    const description = formData.get("description")?.toString();
-    const credits = formData.get("credits")?.toString();
-    const localisations = formData.get("localisations")?.toString();
-    const production_date = formData.get("production_date")?.toString();
-    const image_cover = coverInput.files?.[0];
-    const video = videoInput.files?.[0];
-    const svg_mask = maskInput.files?.[0];
+    const formData = new FormData(event.target as HTMLFormElement);
+    const projectData = prepareProjectData(formData);
+    if (!projectData) {
+      console.log("Invalid project data");
+      return;
+    }
 
-    const result = NewProjectSchema.safeParse({
-      title,
-      description,
-      credits,
-      localisations,
-      production_date: new Date(production_date ?? "").getTime(),
+    console.log(projectData);
+
+    const storage = getStorage(app);
+    const [image_cover, svg_mask, video] = [
+      projectData.image_cover,
+      projectData.svg_mask,
+      projectData.video,
+    ];
+
+    const paths = generatePaths(
+      projectData.title,
       image_cover,
-      video,
       svg_mask,
+      video
+    );
+    const uploadResults = await uploadFiles(
+      storage,
+      paths,
+      image_cover,
+      svg_mask
+    );
+
+    console.log("Finish to uploading images, ", uploadResults);
+
+    if (video) {
+      uploadVideo(storage, paths.video, video, async (videoURL: string) => {
+        console.log("Uploading project...");
+        const response = await sendProjectDataToServer("/api/project", {
+          ...projectData,
+          image_cover: uploadResults.image_cover,
+          svg_mask: uploadResults.svg_mask,
+          video: videoURL,
+        });
+        if (response.redirected) {
+          window.location.assign(response.url);
+        } else {
+          alert("Erreur lors de la connexion, " + response.statusText);
+        }
+      });
+    }
+  }
+
+  function prepareProjectData(formData: FormData) {
+    const result = NewProjectSchema.safeParse({
+      title: formData.get("title")?.toString(),
+      description: formData.get("description")?.toString(),
+      credits: formData.get("credits")?.toString(),
+      localisations: formData.get("localisations")?.toString(),
+      production_date: new Date(
+        formData.get("production_date")?.toString() ?? ""
+      ).getTime(),
+      image_cover: formData.get("image_cover"),
+      svg_mask: formData.get("svg_mask"),
+      video: formData.get("video"),
       create_at: new Date().getTime(),
       update_at: new Date().getTime(),
     });
 
     if (!result.success) {
       console.log(result.error);
-      return;
+      return null;
     }
 
-    console.log(result.data);
+    return result.data;
+  }
 
-    const storage = getStorage(app);
+  function generatePaths(
+    title: string,
+    image_cover: File,
+    svg_mask: File,
+    video: File
+  ) {
+    return {
+      image_cover: `projects/${title}/cover.${image_cover?.type.split("/")[1]}`,
+      svg_mask: `projects/${title}/mask.${svg_mask?.type.split("/")[1]}`,
+      video: `projects/${title}/video.${video?.type.split("/")[1]}`,
+    };
+  }
 
-    const coverRef = ref(
-      storage,
-      `projects/${title}/cover.${image_cover?.type.split("/")[1]}`
-    );
-    const maskRef = ref(
-      storage,
-      `projects/${title}/mask.${svg_mask?.type.split("/")[1]}`
-    );
-    const videoRef = ref(
-      storage,
-      `projects/${title}/video.${video?.type.split("/")[1]}`
-    );
+  async function uploadFiles(
+    storage: FirebaseStorage,
+    paths: { image_cover: string; svg_mask: string },
+    image_cover: File,
+    svg_mask: File
+  ) {
+    const [coverRef, maskRef] = [
+      ref(storage, paths.image_cover),
+      ref(storage, paths.svg_mask),
+    ];
 
-    const promises: Promise<UploadResult>[] = [];
+    const promises = [];
     if (image_cover) {
       promises.push(uploadBytes(coverRef, image_cover));
     }
@@ -240,45 +281,51 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
       promises.push(uploadBytes(maskRef, svg_mask));
     }
 
-    console.log("Uploading images...");
-    const imagesResult = await Promise.all(promises);
-    console.log("Finish to uploading images, ", imagesResult);
+    const [coverResult, maskResult] = await Promise.all(promises);
+    return {
+      image_cover: coverResult?.ref.fullPath,
+      svg_mask: maskResult?.ref.fullPath,
+    };
+  }
 
-    if (video) {
-      console.log("Uploading video...");
-      const videoResult = uploadBytesResumable(videoRef, video);
-      videoResult.on(
-        "state_changed",
-        (snapshot) => {
-          const progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          videoProgress.value = progress;
-          console.log(progress);
-        },
-        (error) => {
-          console.log(error);
-        },
-        async () => {
-          console.log("Finish to uploading video");
-          const videoURL = await getDownloadURL(videoRef);
-          console.log("Uploading project...");
-          const response = await fetch("/api/project", {
-            method: "POST",
-            body: JSON.stringify({
-              ...result.data,
-              image_cover: imagesResult[0].ref.fullPath,
-              svg_mask: imagesResult[1].ref.fullPath,
-              video: videoURL,
-            }),
-          });
-          if (response.redirected) {
-            window.location.assign(response.url);
-          } else {
-            alert("Erreur lors de la connexion, " + response.statusText);
-          }
-        }
-      );
-    }
-  });
+  function uploadVideo(
+    storage: FirebaseStorage,
+    videoPath: string,
+    videoFile: File,
+    callback: (videoURL: string) => void
+  ) {
+    const videoRef = ref(storage, videoPath);
+    const videoUploadTask = uploadBytesResumable(videoRef, videoFile);
+
+    videoUploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        const videoProgress = document.getElementById(
+          "video-progress"
+        ) as HTMLProgressElement;
+        videoProgress.hidden = false;
+        videoProgress.value = progress;
+        console.log(progress);
+      },
+      (error) => {
+        console.log(error);
+      },
+      async () => {
+        console.log("Finish to uploading video");
+        const videoURL = await getDownloadURL(videoRef);
+        callback(videoURL);
+      }
+    );
+  }
+
+  async function sendProjectDataToServer(url: string, projectData: any) {
+    const response = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(projectData),
+    });
+    return response;
+  }
 </script>

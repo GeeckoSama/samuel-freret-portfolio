@@ -10,7 +10,6 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     ...data,
     create_at: new Date().getTime(),
     update_at: new Date().getTime(),
-    id: "",
   });
   console.log(result);
   if (!result.success) {
