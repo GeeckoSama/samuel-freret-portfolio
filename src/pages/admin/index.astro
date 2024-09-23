@@ -1,0 +1,44 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title='Guilty Vision'>
+  <div class='flex flex-row justify-center gap-8'>
+    <div class='card bg-base-200 max-w-sm'>
+      <div class='card-body'>
+        <div class='card-title'>Projets vidéos</div>
+        <p>Créer, modifier et supprimer des projets vidéos.</p>
+        <div class='card-actions justify-end'>
+          <a role='button' href='/admin/projects' class='btn btn-primary'
+            >Gérer</a
+          >
+        </div>
+      </div>
+    </div>
+    <div class='card bg-base-200 max-w-sm'>
+      <div class='card-body'>
+        <div class='card-title'>Albums photos</div>
+        <p>Créer, modifier et supprimer des albums photos.</p>
+        <div class='card-actions justify-end'>
+          <!-- <a role='button' href='/admin/albums' class='btn btn-primary'>Gérer</a
+          > -->
+          <button class='btn btn-primary' disabled>Soon</button>
+        </div>
+      </div>
+    </div>
+    <div class='card bg-base-200 max-w-sm'>
+      <div class='card-body'>
+        <div class='card-title'>Paramètres</div>
+        <p>Modifier les paramètres de l'application.</p>
+        <div class='card-actions justify-end'>
+          <!-- <a
+            role='button'
+            href='/admin/settings'
+            class='btn btn-primary disabled'>Gérer</a
+          > -->
+          <button class='btn btn-primary' disabled>Soon</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</AdminLayout>

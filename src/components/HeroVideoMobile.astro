@@ -1,0 +1,76 @@
+---
+import type { Videos } from "../utils/interfaces/video.type";
+import { Image } from "@unpic/astro";
+
+interface Props {
+  videos: Videos;
+}
+
+const cdn =
+  process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
+const { videos } = Astro.props;
+---
+
+<div class='h-screen relative'>
+  <div class='swiper h-screen w-screen'>
+    <div class='swiper-wrapper'>
+      {
+        videos.map((video) => {
+          return (
+            <div class='swiper-slide relative'>
+              <Image
+                src={cdn + video.image_cover}
+                layout='constrained'
+                background='auto'
+                alt=''
+                class='h-screen w-auto object-cover'
+              />
+              <div class='absolute inset-0 w-full h-full z-20'>
+                <div class='sticky top-[85%] mt-[50%] lg:mt-[10%] mb-[20%] lg:mb-[10%] px-0 lg:px-12'>
+                  <div class='max-w-lg p-4 mix-blend-difference invert'>
+                    <h2 class='text-4xl lg:text-5xl text-black font-bold mb-4 lg:mb-8 underline'>
+                      {video.title}
+                    </h2>
+                    <div class='flex justify-center lg:justify-end mt-4 lg:mt-8'>
+                      <a
+                        href={"videos/" + video.id}
+                        class='px-2.5 py-1.5 border-zinc-950 border-2 text-xl font-bold text-zinc-950 rounded hover:bg-zinc-950 hover:text-zinc-50 transition-colors cursor-pointer'
+                      >
+                        Voir la vidéo
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+    <div class='swiper-pagination'></div>
+  </div>
+</div>
+
+<script>
+  import Swiper from "swiper";
+  import { Pagination, Mousewheel } from "swiper/modules";
+  import "swiper/css/bundle";
+  import "swiper/css/pagination";
+
+  const swiper = new Swiper(".swiper", {
+    modules: [Pagination, Mousewheel],
+    direction: "horizontal",
+    loop: true,
+    mousewheel: false,
+    pagination: {
+      el: ".swiper-pagination",
+    },
+  });
+</script>
+
+<style>
+  :root {
+    --swiper-theme-color: #fff !important;
+    --swiper-navigation-size: 56px !important;
+  }
+</style>

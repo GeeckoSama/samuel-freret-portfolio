@@ -1,0 +1,22 @@
+---
+import { Image } from "@unpic/astro";
+---
+
+<div class='navbar bg-base-100 border-b border-base-300'>
+  <div class='flex-1'>
+    <a href='/' class='btn btn-ghost'>
+      <Image
+        src='https://samuel-freret.imgix.net/logo.png'
+        layout='constrained'
+        priority={true}
+        class='h-10 w-auto mx-auto'
+      />
+    </a>
+  </div>
+
+  <div class='flex-none'>
+    <a href='/api/auth/signout' class='btn btn-sm btn-outline btn-error'>
+      Se déconnecter
+    </a>
+  </div>
+</div>

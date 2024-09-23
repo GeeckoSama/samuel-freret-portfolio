@@ -1,7 +1,7 @@
 {
   "name": "samuel-freret-portfolio",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -10,9 +10,24 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^4.6.4",
     "@astrojs/check": "^0.5.10",
-    "typescript": "^5.4.5"
+    "@astrojs/sitemap": "^3.1.6",
+    "@astrojs/tailwind": "^5.1.1",
+    "@astrojs/vercel": "^7.8.1",
+    "@astrolib/seo": "1.0.0-beta.6",
+    "@unpic/astro": "^0.0.44",
+    "astro": "^4.15.7",
+    "firebase": "^10.13.2",
+    "firebase-admin": "^12.5.0",
+    "gsap": "^3.12.5",
+    "swiper": "^11.1.14",
+    "tailwindcss": "^3.4.12",
+    "typescript": "^5.6.2",
+    "zod": "^3.23.8"
   },
-  "packageManager": "pnpm@9.0.5+sha256.61bd66913b52012107ec25a6ee4d6a161021ab99e04f6acee3aa50d0e34b4af9"
+  "packageManager": "pnpm@9.0.5+sha256.61bd66913b52012107ec25a6ee4d6a161021ab99e04f6acee3aa50d0e34b4af9",
+  "devDependencies": {
+    "daisyui": "^4.12.10",
+    "prettier": "3.3.3"
+  }
 }
