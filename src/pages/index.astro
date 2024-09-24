@@ -1,4 +1,5 @@
 ---
+import { AstroSeo } from "@astrolib/seo";
 import { getFirestore } from "firebase-admin/firestore";
 import Hero from "../components/Hero.astro";
 import ProjectCard from "../components/ProjectCard.astro";
@@ -18,6 +19,29 @@ const projects = projectsSnapshot.docs.map((doc) => ({
 })) as Projects;
 ---
 
+<AstroSeo
+  title='Guilty Vision'
+  description='Guilty vision est un studio de production de vidéos et photos.'
+  canonical='https://guiltyvision.com/'
+  +
+  project.id
+  openGraph={{
+    title: "Guilty vision production",
+    description:
+      "Guilty vision est un studio de production de vidéos et photos.",
+    url: "https://guiltyvision.com/",
+    images: [
+      {
+        url: "https://guiltyvision.com/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Guilty vision logo",
+        type: "image/png",
+      },
+    ],
+    site_name: "Guilty vision production",
+  }}
+/>
 <Layout title='Guilty Vision'>
   <Hero />
   <section class='h-[80vh] flex flex-col items-center justify-center'>

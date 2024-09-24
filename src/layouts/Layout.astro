@@ -1,5 +1,4 @@
 ---
-import { AstroSeo } from "@astrolib/seo";
 import Footer from "../components/Footer.astro";
 ---
 
@@ -11,27 +10,6 @@ import Footer from "../components/Footer.astro";
     <link rel='icon' type='image/ico' href='/favicon.ico' />
     <meta name='generator' content={Astro.generator} />
     <link rel='sitemap' href='/sitemap-index.xml' />
-    <AstroSeo
-      title='Guilty vision production'
-      description='Guilty vision est un studio de production de vidéos et photos.'
-      canonical='https://guiltyvision.com/'
-      openGraph={{
-        title: "Guilty vision production",
-        description:
-          "Guilty vision est un studio de production de vidéos et photos.",
-        url: "https://guiltyvision.com",
-        images: [
-          {
-            url: "https://guiltyvision.com/logo.png",
-            width: 1200,
-            height: 630,
-            alt: "Guilty vision logo",
-            type: "image/png",
-          },
-        ],
-        site_name: "Guilty vision production",
-      }}
-    />
   </head>
   <body>
     <main class='bg-base-100'>

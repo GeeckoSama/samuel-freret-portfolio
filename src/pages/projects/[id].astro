@@ -1,4 +1,5 @@
 ---
+import { AstroSeo } from "@astrolib/seo";
 import type { Project } from "../../utils/interfaces/project.type";
 import ProjectHero from "../../components/ProjectHero.astro";
 import { getFirestore } from "firebase-admin/firestore";
@@ -24,6 +25,28 @@ const formatDate = (date: number) => {
 };
 ---
 
+<AstroSeo
+  title={project.title}
+  description={project.description}
+  canonical='https://guiltyvision.com/projects/'
+  +
+  project.id
+  openGraph={{
+    title: project.title,
+    description: project.description,
+    url: "https://guiltyvision.com/projects/" + project.id,
+    images: [
+      {
+        url: "https://guiltyvision.com/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Guilty vision logo",
+        type: "image/png",
+      },
+    ],
+    site_name: "Guilty vision production",
+  }}
+/>
 <Layout title={project.title}>
   <ProjectHero project={project} />
   <div class='h-screen'>
@@ -34,12 +57,12 @@ const formatDate = (date: number) => {
         >
           {project.title}
         </h1>
-        <h3
+        <h2
           class='text-lg italic text-end pb-4 text-primary-light dark:text-primary-dark'
         >
           {formatDate(project.production_date)} -
           {project.localisations}
-        </h3>
+        </h2>
         <p class='text-xl text-primary-light dark:text-primary-dark'>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac
           metus nec libero ultricies ultricies. Nam auctor, nunc nec faucibus
@@ -51,6 +74,11 @@ const formatDate = (date: number) => {
         >
           {project.credits}
         </h3>
+        <div class='flex pt-10'>
+          <a href='../' class='btn btn-outline btn-primary'
+            >Voir d'autre projets</a
+          >
+        </div>
       </div>
     </div>
   </div>
