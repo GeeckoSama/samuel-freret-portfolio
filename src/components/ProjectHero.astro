@@ -1,167 +1,162 @@
 ---
-import type { Project } from '../utils/interfaces/project.type';
+import type { Project } from "../utils/interfaces/project.type";
 
 interface Props {
   project: Project;
 }
 
 const { project } = Astro.props;
-const cdn = process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
+const cdn =
+  process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
 ---
 
-
-
-<div id="container" class="relative h-[300vh]">
-    <div
+<div id='container' class='relative h-[300vh]'>
+  <div
     style={{
       maskImage: `url('${cdn + project.svg_mask}')`,
     }}
-      class="sticky top-0 flex h-screen overflow-hidden mask"
+    class='sticky top-0 flex h-screen overflow-hidden mask'
+  >
+    <video
+      autoplay='true'
+      muted='true'
+      disablepictureinpicture
+      playsinline='true'
+      loop='true'
+      class='h-full w-screen object-cover border-8 border-base-light shadow-2xl'
     >
-      <video
-        autoplay="true"
-        muted="true"
-        disablepictureinpicture
-        playsinline="true"
-        loop="true"
-        class="h-full w-screen object-cover border-8 border-base-light shadow-2xl"
-      >
-        <source src={project.video} type="video/mp4" />
-      </video>
-    </div>
+      <source src={project.video} type='video/mp4' />
+    </video>
+  </div>
+  <div class='sticky top-[80%] bottom-24 w-full mix-blend-difference invert'>
     <div
-      class="sticky top-[80%] bottom-24 w-full mix-blend-difference invert"
+      class='flex mx-auto w-10 h-12 justify-center items-end text-primary-light border-primary-light border-2 rounded-2xl'
     >
-      <div
-        class="flex mx-auto w-10 h-12 justify-center items-end text-primary-light border-primary-light border-2 rounded-2xl"
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        fill='none'
+        viewBox='0 0 24 24'
+        stroke-width='2.5'
+        stroke='currentColor'
+        class='size-6 animate-bounce'
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="2.5"
-          stroke="currentColor"
-          class="size-6 animate-bounce"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="m4.5 5.25 7.5 7.5 7.5-7.5m-15 6 7.5 7.5 7.5-7.5"
-          />
-        </svg>
-      </div>
-    </div>
-    <div class="fixed inset-0 z-50">
-      <a
-        href="/"
-        class="fixed top-8 left-8 lg:top-16 lg:left-16 text-primary-light dark:text-primary-dark text-3xl font-extrabold border-2 border-primary-dark dark:border-primary-light hover:border-primary-light hover:dark:border-primary-dark px-2.5 py-1.5 rounded-[20px] transition-all"
-        ><svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="2.5"
-          stroke="currentColor"
-          class="size-8"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
-          />
-        </svg>
-      </a>
+        <path
+          stroke-linecap='round'
+          stroke-linejoin='round'
+          d='m4.5 5.25 7.5 7.5 7.5-7.5m-15 6 7.5 7.5 7.5-7.5'></path>
+      </svg>
     </div>
   </div>
+  <!-- <div class='fixed inset-0 z-50'>
+    <a
+      href='/'
+      class='fixed top-8 left-8 lg:top-16 lg:left-16 btn btn-square btn-primary'
+      ><svg
+        xmlns='http://www.w3.org/2000/svg'
+        fill='none'
+        viewBox='0 0 24 24'
+        stroke-width='2.5'
+        stroke='currentColor'
+        class='size-8'
+      >
+        <path
+          stroke-linecap='round'
+          stroke-linejoin='round'
+          d='M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3'></path>
+      </svg>
+    </a>
+  </div> -->
+</div>
 
-  <script>
-    if (!CSS.supports('animation-timeline', 'scroll()')) {
-        console.log(
-          'animation-timeline: scroll() is not supported switch with GSAP'
+<script>
+  if (!CSS.supports("animation-timeline", "scroll()")) {
+    console.log(
+      "animation-timeline: scroll() is not supported switch with GSAP"
+    );
+    const { gsap } = await import("gsap");
+    const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+    const context = gsap.context(() => {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: "#container",
+            start: "0%",
+            end: "50%",
+            scrub: true,
+          },
+        })
+        .fromTo(
+          ".mask",
+          { maskSize: "80%", webkitMaskSize: "80%" },
+          { maskSize: "50000%", webkitMaskSize: "50000%" }
         );
-        const { gsap } = await import('gsap');
-        const { ScrollTrigger } = await import('gsap/ScrollTrigger');
-        const context = gsap.context(() => {
-          gsap.registerPlugin(ScrollTrigger);
-          gsap
-            .timeline({
-              scrollTrigger: {
-                trigger: '#container',
-                start: '0%',
-                end: '50%',
-                scrub: true,
-              },
-            })
-            .fromTo(
-              '.mask',
-              { maskSize: '80%', webkitMaskSize: '80%' },
-              { maskSize: '50000%', webkitMaskSize: '50000%' }
-            );
-          gsap
-            .timeline({
-              scrollTrigger: {
-                trigger: 'video',
-                start: '25%',
-                end: '75%',
-                scrub: true,
-              },
-            })
-            .fromTo(
-              'video',
-              { transform: 'scale(1)', borderRadius: '0rem' },
-              { transform: 'scale(0.5)', borderRadius: '40px' }
-            );
-        });
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: "video",
+            start: "25%",
+            end: "75%",
+            scrub: true,
+          },
+        })
+        .fromTo(
+          "video",
+          { transform: "scale(1)", borderRadius: "0rem" },
+          { transform: "scale(0.5)", borderRadius: "40px" }
+        );
+    });
+  }
+</script>
+
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .mask {
+        animation: reveal-video ease-in forwards;
+        animation-timeline: scroll(root block);
+        animation-range: entry 0% exit 50%;
       }
-  </script>
 
-  <style>
-    @media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: scroll()) {
+      video {
+        animation: shrinkVideo ease-in-out forwards;
+        animation-timeline: scroll(root block);
+        animation-range: entry 25% exit 75%;
+      }
+    }
     .mask {
-      animation: reveal-video ease-in forwards;
-      animation-timeline: scroll(root block);
-      animation-range: entry 0% exit 50%;
-    }
-
-    video {
-      animation: shrinkVideo ease-in-out forwards;
-      animation-timeline: scroll(root block);
-      animation-range: entry 25% exit 75%;
+      -webkit-mask-size: 50%;
+      -webkit-mask-position: center;
+      -webkit-mask-repeat: no-repeat;
+      mask-size: 50%;
+      mask-position: center;
+      mask-repeat: no-repeat;
     }
   }
-  .mask {
-    -webkit-mask-size: 50%;
-    -webkit-mask-position: center;
-    -webkit-mask-repeat: no-repeat;
-    mask-size: 50%;
-    mask-position: center;
-    mask-repeat: no-repeat;
-  }
-}
 
-@keyframes reveal-video {
-  from {
-    mask-size: 80%;
-    -webkit-mask-size: 80%;
+  @keyframes reveal-video {
+    from {
+      mask-size: 80%;
+      -webkit-mask-size: 80%;
+    }
+    to {
+      mask-size: 50000%;
+      -webkit-mask-size: 50000%;
+    }
   }
-  to {
-    mask-size: 50000%;
-    -webkit-mask-size: 50000%;
-  }
-}
 
-@keyframes shrinkVideo {
-  from {
-    transform: scale(1);
-    border-radius: 0rem;
+  @keyframes shrinkVideo {
+    from {
+      transform: scale(1);
+      border-radius: 0rem;
+    }
+    25% {
+      transform: scale(0.75);
+      border-radius: 35px;
+    }
+    to {
+      transform: scale(0.5);
+      border-radius: 40px;
+    }
   }
-  25% {
-    transform: scale(0.75);
-    border-radius: 35px;
-  }
-  to {
-    transform: scale(0.5);
-    border-radius: 40px;
-  }
-}
-  </style>
+</style>

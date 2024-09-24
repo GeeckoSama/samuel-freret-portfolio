@@ -11,7 +11,8 @@ const cdn =
 >
   <Image
     src='https://samuel-freret.imgix.net/logo.png'
-    layout='fullWidth'
+    alt='Guilty vision logo'
+    layout='constrained'
     priority={true}
     class='motion-reduce:absolute sticky top-[10%] pb-[10%] w-full md:max-w-96 mx-auto z-10 logo'
   />
@@ -53,73 +54,57 @@ const cdn =
 
 <script>
   if (!CSS.supports("animation-timeline", "scroll()")) {
-    console.log(
-      "animation-timeline: scroll() is not supported switch with GSAP"
-    );
     const { gsap } = await import("gsap");
     const { ScrollTrigger } = await import("gsap/ScrollTrigger");
     gsap.registerPlugin(ScrollTrigger);
 
-    gsap.fromTo(
-      ".cover",
-      {
-        scale: 0.8,
-        borderRadius: "40px",
-        border: "4px solid #fafafa",
-        y: "100vh",
-      },
-      {
-        y: 0,
+    gsap
+      .timeline({
         scrollTrigger: {
           trigger: ".hero-container",
-          start: "top bottom",
-          end: "top 25%",
+          start: "top top",
+          end: "bottom 50%",
           scrub: true,
         },
-      }
-    );
+      })
+      .fromTo(
+        ".cover",
+        {
+          scale: 0.8,
+          borderRadius: "40px",
+          border: "4px solid #fafafa",
+          y: "100vh",
+        },
+        {
+          scale: 1,
+          borderRadius: "0px",
+          border: "none",
+          y: 0,
+          ease: "ease-in",
+        }
+      );
 
-    gsap.to(".cover", {
-      scale: 0.85,
-      borderRadius: "35px",
-      border: "2px solid #fafafa",
-      scrollTrigger: {
-        trigger: ".hero-container",
-        start: "top 25%",
-        end: "bottom 50%",
-        scrub: true,
-      },
-    });
-
-    gsap.to(".cover", {
-      scale: 1,
-      borderRadius: "0px",
-      border: "none",
-      scrollTrigger: {
-        trigger: ".cover",
-        start: "top 50%",
-        end: "bottom 0%",
-        scrub: true,
-      },
-    });
-
-    gsap.fromTo(
-      ".logo",
-      {
-        scale: 0.8,
-        y: "25vh",
-      },
-      {
-        scale: 1,
-        y: 0,
+    gsap
+      .timeline({
         scrollTrigger: {
           trigger: ".hero-container",
-          start: "top 75%",
-          end: "top 25%",
+          start: "top top",
+          end: "bottom 50%",
           scrub: true,
         },
-      }
-    );
+      })
+      .fromTo(
+        ".logo",
+        {
+          scale: 0.8,
+          y: "25vh",
+        },
+        {
+          scale: 1,
+          y: 0,
+          ease: "ease-in",
+        }
+      );
   }
 </script>
 
@@ -138,6 +123,7 @@ const cdn =
         transform: translateY(25vh);
       }
     }
+
     @supports (animation-timeline: scroll()) {
       .cover {
         animation: resizeVideo ease-in both;
