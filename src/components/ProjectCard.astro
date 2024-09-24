@@ -12,41 +12,6 @@ const cdn =
 const { project } = Astro.props;
 ---
 
-<!-- <section>
-  <h1
-      class="text-3xl xl:text-6xl max-w-5xl font-bold text-primary-light dark:text-primary-dark capitalize"
-    >
-        {project.title}
-    </h1>
-    <a href={`/projects/${project.id}`}>
-      <div
-      class="h-[512px] w-full rounded-[20px] md:rounded-[40px] hover:scale-[101%] transition-all shadow-md hover:shadow-lg dark:hover:shadow-zinc-900 group hover:cursor-pointer overflow-hidden border-4 border-primary-dark"
-    >
-      <Image
-        src={cdn + project.image_cover}
-        layout="fullWidth"
-        class="w-auto h-[512px] object-cover object-center"
-      />
-    </div>
-    <div class="flex justify-end space-x-2 items-center md:hidden text-primary-light dark:text-primary-dark">
-      <p class="text-xl uppercase">Voir le projet</p>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="size-6 text-zinc-950 dark:text-zinc-50"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
-        />
-      </svg>
-    </div></a>
-    
-</section> -->
 <a
   href={`/projects/${project.id}`}
   class='card bg-base-200 xs:image-full w-full shadow-md hover:shadow-xl transition-all scale-95 hover:scale-100 ease-in duration-200'
@@ -55,11 +20,12 @@ const { project } = Astro.props;
     <Image
       src={cdn + project.image_cover}
       layout='fullWidth'
+      alt={"Couverture du projet " + project.title}
       class='w-auto h-[512px] object-cover object-center'
     />
   </figure>
   <div class='card-body'>
-    <h2 class='card-title text-5xl font-bold uppercase'>
+    <h2 class='card-title text-2xl lg:text-5xl font-bold uppercase'>
       {project.title}
     </h2>
   </div>
