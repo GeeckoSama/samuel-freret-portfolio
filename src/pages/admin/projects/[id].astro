@@ -14,6 +14,20 @@ const project = {
   ...projectSnapshot.data(),
 } as Project;
 
+/* Format date to YYYY-MM-DD */
+const formatDate = (timestamp: number) => {
+  let date = new Date(timestamp);
+  let year = date.getFullYear();
+  let month = String(date.getMonth() + 1).padStart(2, "0");
+  let day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+// Exemple d'utilisation :
+let timestamp = 1635868924000; // Remplacez par votre timestamp
+console.log(formatDate(timestamp)); // Output : "2021-11-02"
+
 const CDN =
   process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
 ---
@@ -38,7 +52,6 @@ const CDN =
             value={project.title}
             required
             readonly
-            disabled
           />
         </label>
 
@@ -72,7 +85,7 @@ const CDN =
               name='production_date'
               type='date'
               class='grow'
-              value={project.production_date}
+              value={formatDate(project.production_date)}
               required
             />
           </label>
@@ -103,7 +116,6 @@ const CDN =
                 name='image_cover'
                 type='file'
                 accept='image/*'
-                required
                 class='file-input file-input-bordered
           w-full'
               />
@@ -133,7 +145,6 @@ const CDN =
                 name='svg_mask'
                 type='file'
                 accept='image/*'
-                required
                 class='file-input file-input-bordered w-full'
               />
             </label>
@@ -153,7 +164,6 @@ const CDN =
             id='video-input'
             type='file'
             accept='video/*'
-            required
             class='file-input
           file-input-bordered w-full'
           />

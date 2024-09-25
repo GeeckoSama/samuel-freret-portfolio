@@ -13,16 +13,15 @@ const auth = getAuth(app);
 
 /* Check current session */
 if (!Astro.cookies.has("__session")) {
+  console.log("No session cookie");
   return Astro.redirect("/signin");
 }
-const sessionCookie = Astro.cookies.get("__session")?.value;
-if (!sessionCookie) {
-  return Astro.redirect("/signin");
-}
+const sessionCookie = Astro.cookies.get("__session")!.value;
 const decodedCookie = await auth.verifySessionCookie(sessionCookie);
 const user = await auth.getUser(decodedCookie.uid);
 
 if (!user) {
+  console.log("No user");
   return Astro.redirect("/signin");
 }
 ---
@@ -38,7 +37,7 @@ if (!user) {
     <title>{title}</title>
   </head>
   <body>
-    <AdminNavbar />
+    <AdminNavbar email={user.email} />
     <main class='bg-base-100 p-8'>
       <slot />
     </main>
