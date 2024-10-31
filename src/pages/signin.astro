@@ -9,16 +9,21 @@ const cdn =
   process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
 
 /* Check if the user is authenticated */
-const auth = getAuth(app);
-if (Astro.cookies.has("__session")) {
-  const sessionCookie = Astro.cookies.get("__session")?.value;
-  if (!sessionCookie) {
-    return Astro.redirect("/signin");
+try {
+  const auth = getAuth(app);
+  if (Astro.cookies.has("__session")) {
+    const sessionCookie = Astro.cookies.get("__session")?.value;
+    if (!sessionCookie) {
+      return;
+    }
+    const decodedCookie = await auth.verifySessionCookie(sessionCookie);
+    if (decodedCookie) {
+      return Astro.redirect("/admin");
+    }
   }
-  const decodedCookie = await auth.verifySessionCookie(sessionCookie);
-  if (decodedCookie) {
-    return Astro.redirect("/admin");
-  }
+} catch (error) {
+  console.log(error);
+  Astro.cookies.delete("__session");
 }
 ---
 
