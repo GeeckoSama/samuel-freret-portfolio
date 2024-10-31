@@ -1,0 +1,53 @@
+<div id='consent-banner' class='fixed inset-2 z-50 justify-center flex'>
+  <div class='card card-compact bg-base-300/80 backdrop-blur-sm shadow-2xl'>
+    <div class='card-body'>
+      <h2 class='card-title'>Consentement</h2>
+      <p class='card-text'>
+        Ce site utilise Google Analytics pour mesurer les visites et les pages
+        vues. Les données sont anonymes et ne sont utilisées que pour améliorer
+        le site.
+      </p>
+      <div class='card-actions justify-end'>
+        <a
+          href='https://www.google.com/policies/privacy/'
+          class='btn btn-primary'>En savoir plus</a
+        >
+        <button class='btn btn-outline btn-primary' id='consent'>
+          J'accepte
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const consentBanner = document.getElementById(
+    "consent-banner"
+  ) as HTMLElement;
+  const consent = window.localStorage.getItem("consent") === "true";
+  if (!consent) {
+    window.localStorage.setItem("consent", "false");
+    consentBanner.style.display = "flex";
+  } else {
+    consentBanner.style.display = "none";
+  }
+
+  const consentButton = document.getElementById("consent") as HTMLButtonElement;
+  consentButton.addEventListener("click", provideConsent);
+  function provideConsent() {
+    consentBanner.style.display = "none";
+    window.localStorage.setItem("consent", "true");
+    if (!(window as any).dataLayer) {
+      console.log("dataLayer is not defined");
+      return;
+    }
+    (window as any).dataLayer.push({
+      event: "consent",
+      consent: true,
+    });
+    /*     window.gtag("consent", "update", {
+      ad_storage: "granted",
+      analytics_storage: "granted",
+    }); */
+  }
+</script>

@@ -1,5 +1,34 @@
 ---
 import AdminLayout from "../../layouts/AdminLayout.astro";
+import { getAuth } from "firebase-admin/auth";
+import { app } from "../../utils/firebase/server";
+
+try {
+  const auth = getAuth(app);
+
+  if (!Astro.cookies.has("__session")) {
+    throw new Error("No session cookie");
+  }
+
+  const sessionCookie = Astro.cookies.get("__session")?.value;
+  if (!sessionCookie) {
+    throw new Error("No session cookie");
+  }
+
+  const decodedCookie = await auth.verifySessionCookie(sessionCookie);
+  if (!decodedCookie) {
+    throw new Error("No decoded cookie");
+  }
+
+  const user = await auth.getUser(decodedCookie.uid);
+  if (!user) {
+    throw new Error("No user");
+  }
+  console.log(user);
+} catch (error) {
+  console.log(error);
+  return Astro.redirect("/signin");
+}
 ---
 
 <AdminLayout title='Guilty Vision'>

@@ -4,6 +4,8 @@ import { imageService } from "@unpic/astro/service";
 import vercel from "@astrojs/vercel/serverless";
 import sitemap from "@astrojs/sitemap";
 
+import partytown from "@astrojs/partytown";
+
 // https://astro.build/config
 export default defineConfig({
   output: "server",
@@ -17,6 +19,9 @@ export default defineConfig({
       changefreq: "weekly",
       priority: 0.7,
       lastmod: new Date("2024-09-23"),
+    }),
+    partytown({
+      forward: ["dataLayer.push"],
     }),
   ],
   image: {

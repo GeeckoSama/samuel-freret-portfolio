@@ -1,5 +1,7 @@
 ---
 import { Image } from "@unpic/astro";
+
+const { email } = Astro.props;
 ---
 
 <div class='navbar bg-base-100 border-b border-base-300'>
@@ -14,7 +16,8 @@ import { Image } from "@unpic/astro";
     </a>
   </div>
 
-  <div class='flex-none'>
+  <div class='flex gap-2 items-center'>
+    {email}
     <a href='/api/auth/signout' class='btn btn-sm btn-outline btn-error'>
       Se déconnecter
     </a>

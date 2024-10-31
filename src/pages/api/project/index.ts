@@ -1,17 +1,21 @@
 import type { APIRoute } from "astro";
 import { getFirestore } from "firebase-admin/firestore";
 import { app } from "../../../utils/firebase/server";
-import { ProjectSchema } from "../../../utils/interfaces/project.type";
+import {
+  ProjectSchema,
+  ProjectsSchema,
+} from "../../../utils/interfaces/project.type";
+
+const db = getFirestore(app);
+const projectsRef = db.collection("projects");
 
 export const POST: APIRoute = async ({ request, redirect }) => {
   const data = await request.json();
-  console.log(data);
   const result = ProjectSchema.safeParse({
     ...data,
     create_at: new Date().getTime(),
     update_at: new Date().getTime(),
   });
-  console.log(result);
   if (!result.success) {
     return new Response(result.error.toString(), {
       status: 400,
@@ -19,10 +23,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   }
 
   try {
-    const db = getFirestore(app);
-
-    const projectRef = db.collection("projects");
-    await projectRef.add({
+    await projectsRef.add({
       ...result.data,
     });
   } catch (error) {
@@ -31,4 +32,23 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     });
   }
   return redirect("/admin/projects");
+};
+
+export const GET = async () => {
+  const projectSnapshot = await projectsRef.get();
+  const project = projectSnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+  const result = ProjectsSchema.safeParse(project);
+  if (!result.success) {
+    return new Response(result.error.toString(), {
+      status: 400,
+    });
+  }
+  return new Response(JSON.stringify(project), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 };

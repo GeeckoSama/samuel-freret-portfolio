@@ -14,7 +14,7 @@ const cdn =
     alt='Guilty vision logo'
     layout='constrained'
     priority={true}
-    class='motion-reduce:absolute sticky top-[10%] pb-[10%] w-full md:max-w-96 mx-auto z-10 logo'
+    class='motion-reduce:absolute sticky top-[10%] pb-[25%] w-full md:max-w-96 mx-auto z-10 logo mix-blend-difference invert-1'
   />
   <video
     autoplay={true}
@@ -31,9 +31,9 @@ const cdn =
     />
     <source src='./SHOWREEL1080.mp4' type='video/mp4' />
   </video>
-  <div class='sticky top-[80%] bottom-24 w-full mix-blend-difference invert'>
+  <div class='sticky top-[80%] pb-8 w-full mix-blend-difference invert'>
     <div
-      class='flex mx-auto w-10 h-12 justify-center items-end text-primary-light border-primary-light border-2 rounded-2xl'
+      class='flex mx-auto w-10 h-12 justify-center items-end text-primary-light border-primary border-2 rounded-3xl'
     >
       <svg
         xmlns='http://www.w3.org/2000/svg'
@@ -63,25 +63,19 @@ const cdn =
         scrollTrigger: {
           trigger: ".hero-container",
           start: "top top",
-          end: "bottom 50%",
+          end: "center 30%",
           scrub: true,
+          markers: false,
         },
       })
       .fromTo(
         ".cover",
         {
           scale: 0.8,
-          borderRadius: "40px",
-          border: "4px solid #fafafa",
+          borderRadius: "40px solid #fafafa",
           y: "100vh",
         },
-        {
-          scale: 1,
-          borderRadius: "0px",
-          border: "none",
-          y: 0,
-          ease: "ease-in",
-        }
+        { scale: 0.85, borderRadius: "30px", y: 0, ease: "ease-in" }
       );
 
     gsap
@@ -89,20 +83,62 @@ const cdn =
         scrollTrigger: {
           trigger: ".hero-container",
           start: "top top",
+          end: "center 30%",
+          scrub: true,
+          markers: false,
+        },
+      })
+      .fromTo(
+        ".logo",
+        {
+          scale: 1,
+          y: "25vh",
+        },
+        {
+          scale: 0.8,
+          y: 0,
+        }
+      );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: ".hero-container",
+          start: "center 30%",
           end: "bottom 50%",
           scrub: true,
+          markers: false,
+        },
+      })
+      .fromTo(
+        ".cover",
+        {
+          scale: 0.85,
+          borderRadius: "30px solid #fafafa",
+          y: 0,
+        },
+        { scale: 1, borderRadius: "0px", y: 0, ease: "ease-in" }
+      );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: ".hero-container",
+          start: "center 30%",
+          end: "bottom 50%",
+          scrub: true,
+          markers: false,
         },
       })
       .fromTo(
         ".logo",
         {
           scale: 0.8,
-          y: "25vh",
+          y: 0,
         },
         {
-          scale: 1,
-          y: 0,
-          ease: "ease-in",
+          scale: 0.5,
+          y: "-15vh",
         }
       );
   }
@@ -163,7 +199,7 @@ const cdn =
 
   @keyframes resizeLogo {
     from {
-      scale: 0.8;
+      scale: 1;
       transform: translateY(25vh);
     }
     25% {
@@ -171,7 +207,8 @@ const cdn =
       transform: translateY(0);
     }
     to {
-      scale: 1;
+      scale: 0.5;
+      transform: translateY(-25vh);
     }
   }
 </style>
