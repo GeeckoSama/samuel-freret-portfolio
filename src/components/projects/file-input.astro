@@ -1,0 +1,24 @@
+---
+interface Props {
+  label: string;
+  name: string;
+  accept?: string;
+  required?: boolean;
+}
+
+const props = Astro.props;
+---
+
+<label class='form-control w-full'>
+  <div class='label'>
+    <span class='label-text'>{props.label}</span>
+  </div>
+  <input
+    id={`${props.name}-input`}
+    name={props.name}
+    type='file'
+    accept={props.accept}
+    required={props.required}
+    class='file-input file-input-bordered w-full'
+  />
+</label>

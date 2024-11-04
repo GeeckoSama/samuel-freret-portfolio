@@ -1,131 +1,13 @@
 ---
+import ProjectForm from "../../../components/projects/project-form.astro";
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 ---
 
 <AdminLayout title='Nouveau projet'>
   <div class='lg:card lg:bg-base-200 mx-auto overflow-x-auto lg:max-w-5xl'>
     <diV class='lg:card-body'>
-      <form
-        action='/api/project'
-        method='post'
-        enctype='multipart/form-data'
-        class='flex flex-col gap-4'
-      >
-        <label class='input input-bordered flex items-center gap-2'>
-          Titre
-          <input
-            name='title'
-            type='text'
-            class='grow'
-            placeholder=''
-            required
-          />
-        </label>
-
-        <textarea
-          name='description'
-          class='textarea textarea-bordered'
-          placeholder='Résumé...'
-          rows='10'></textarea>
-
-        <label class='input input-bordered flex items-center gap-2'>
-          Crédits
-          <input
-            name='credits'
-            type='text'
-            class='grow'
-            placeholder='Samuel Freret, Camille Provost'
-            required
-          />
-        </label>
-
-        <div class='flex flex-col lg:flex-row gap-4 justify-between'>
-          <label class='input input-bordered flex items-center gap-2'>
-            Localisation
-            <input
-              name='localisations'
-              type='text'
-              class='grow'
-              placeholder='Bordeaux'
-            />
-          </label>
-
-          <label class='input input-bordered flex items-center gap-2'>
-            Date de production
-            <input name='production_date' type='date' class='grow' required />
-          </label>
-        </div>
-
-        <div class='flex flex-col lg:flex-row gap-8 justify-between'>
-          <div>
-            <div class='w-full h-60 bg-base-300 rounded-box'>
-              <img
-                id='cover-preview'
-                src='https://placehold.co/600x400?text=Couverture'
-                alt=''
-                class='h-full w-full object-cover mx-auto rounded-box'
-              />
-            </div>
-            <label class='form-control w-full'>
-              <div class='label'>
-                <span class='label-text'>Fichier de couverture</span>
-              </div>
-              <input
-                id='cover-input'
-                name='image_cover'
-                type='file'
-                accept='image/*'
-                required
-                class='file-input file-input-bordered w-full'
-              />
-            </label>
-          </div>
-
-          <div>
-            <div class='w-full h-60 bg-base-300 rounded-box'>
-              <img
-                id='mask-preview'
-                src='https://placehold.co/600x400?text=Masque'
-                alt=''
-                class='h-full w-full object-cover mx-auto rounded-box'
-              />
-            </div>
-            <label class='form-control w-full'>
-              <div class='label'>
-                <span class='label-text'>Fichier du masque</span>
-              </div>
-              <input
-                id='mask-input'
-                name='svg_mask'
-                type='file'
-                accept='image/*'
-                required
-                class='file-input file-input-bordered w-full'
-              />
-            </label>
-          </div>
-        </div>
-
-        <label class='form-control w-full'>
-          <div class='label'>
-            <span class='label-text'>Fichier vidéo</span>
-          </div>
-          <input
-            name='video'
-            id='video-input'
-            type='file'
-            accept='video/*'
-            required
-            class='file-input file-input-bordered w-full'
-          />
-          <progress
-            id='video-progress'
-            class='progress progress-primary w-full mt-2'
-            value='0'
-            max='100'
-            hidden></progress>
-        </label>
-
+      <form class='flex flex-col gap-4'>
+        <ProjectForm />
         <button type='submit' class='btn btn-primary mt-10'>Enregistrer</button>
       </form>
     </diV>
@@ -133,199 +15,57 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
 >
 
 <script>
+  import { actions } from "astro:actions";
   import {
-    getDownloadURL,
-    getStorage,
-    ref,
-    uploadBytes,
-    uploadBytesResumable,
-    type FirebaseStorage,
-  } from "firebase/storage";
-  import { NewProjectSchema } from "../../../utils/interfaces/project.type";
-  import { app } from "../../../utils/firebase/client";
+    generatePath,
+    uploadFiles,
+    uploadVideo,
+  } from "../../../utils/upload";
 
-  const coverInput = document.getElementById("cover-input") as HTMLInputElement;
-  coverInput.addEventListener("change", (event) =>
-    handleFileInputChange(event)
-  );
-  const maskInput = document.getElementById("mask-input") as HTMLInputElement;
-  maskInput.addEventListener("change", (event) => handleFileInputChange(event));
-
-  function handleFileInputChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.item(0);
-    const preview = document.getElementById(
-      input.id.replace("input", "preview")
-    ) as HTMLImageElement;
-    if (!file) {
-      preview.src = `https://placehold.co/600x400?text=${input.id === "cover-input" ? "Couverture" : "Masque"}`;
-      return;
-    }
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      preview.src = reader.result?.toString() ?? "";
-    };
-  }
-
-  const form = document.querySelector("form") as HTMLFormElement;
-  form.addEventListener("submit", handleSubmit);
-
-  async function handleSubmit(event: SubmitEvent) {
+  const form = document.querySelector("form");
+  form?.addEventListener("submit", async (event) => {
     event.preventDefault();
+    const formData = new FormData(form);
+    const { data, error } = await actions.project.createProject(formData);
+    if (error || !data) {
+      console.log(error);
+      return;
+    }
+    console.log(`Project created with id ${data}`);
 
-    console.log("Start upload...");
-
-    const formData = new FormData(event.target as HTMLFormElement);
-    const projectData = prepareProjectData(formData);
-    if (!projectData) {
-      console.log("Invalid project data");
+    const image_cover = formData.get("image_cover") as File;
+    const svg_mask = formData.get("svg_mask") as File;
+    const video = formData.get("video") as File;
+    if (!image_cover || !svg_mask || !video) {
+      console.log("Missing image_cover, svg_mask or video");
       return;
     }
 
-    console.log(projectData);
-
-    const storage = getStorage(app);
-    const [image_cover, svg_mask, video] = [
-      projectData.image_cover,
-      projectData.svg_mask,
-      projectData.video,
+    const files = [
+      { path: generatePath(data, image_cover), file: image_cover },
+      { path: generatePath(data, svg_mask), file: svg_mask },
     ];
+    const filePaths = await uploadFiles(files);
 
-    const paths = generatePaths(
-      projectData.title,
-      image_cover,
-      svg_mask,
-      video
-    );
-    const uploadResults = await uploadFiles(
-      storage,
-      paths,
-      image_cover,
-      svg_mask
-    );
+    const videoPath = generatePath(data, video);
 
-    console.log("Finish to uploading images, ", uploadResults);
+    uploadVideo(videoPath, video, (videoURL: string) => {
+      updateProject(data, videoURL);
+    });
 
-    if (video) {
-      uploadVideo(storage, paths.video, video, async (videoURL: string) => {
-        console.log("Uploading project...");
-        const response = await sendProjectDataToServer("/api/project", {
-          ...projectData,
-          image_cover: uploadResults.image_cover,
-          svg_mask: uploadResults.svg_mask,
-          video: videoURL,
-        });
-        if (response.redirected) {
-          window.location.assign(response.url);
-        } else {
-          alert("Erreur lors de la connexion, " + response.statusText);
-        }
+    async function updateProject(id: string, videoURL: string) {
+      const { data, error } = await actions.project.updateProjectWithoutForm({
+        id,
+        image_cover: filePaths[0].ref.fullPath,
+        svg_mask: filePaths[1].ref.fullPath,
+        video: videoURL,
       });
-    }
-  }
-
-  function prepareProjectData(formData: FormData) {
-    const result = NewProjectSchema.safeParse({
-      title: formData.get("title")?.toString(),
-      description: formData.get("description")?.toString(),
-      credits: formData.get("credits")?.toString(),
-      localisations: formData.get("localisations")?.toString(),
-      production_date: new Date(
-        formData.get("production_date")?.toString() ?? ""
-      ).getTime(),
-      image_cover: formData.get("image_cover"),
-      svg_mask: formData.get("svg_mask"),
-      video: formData.get("video"),
-      create_at: new Date().getTime(),
-      update_at: new Date().getTime(),
-    });
-
-    if (!result.success) {
-      console.log(result.error);
-      return null;
-    }
-
-    return result.data;
-  }
-
-  function generatePaths(
-    title: string,
-    image_cover: File,
-    svg_mask: File,
-    video: File
-  ) {
-    return {
-      image_cover: `projects/${title}/cover.${image_cover?.type.split("/")[1]}`,
-      svg_mask: `projects/${title}/mask.${svg_mask?.type.split("/")[1]}`,
-      video: `projects/${title}/video.${video?.type.split("/")[1]}`,
-    };
-  }
-
-  async function uploadFiles(
-    storage: FirebaseStorage,
-    paths: { image_cover: string; svg_mask: string },
-    image_cover: File,
-    svg_mask: File
-  ) {
-    const [coverRef, maskRef] = [
-      ref(storage, paths.image_cover),
-      ref(storage, paths.svg_mask),
-    ];
-
-    const promises = [];
-    if (image_cover) {
-      promises.push(uploadBytes(coverRef, image_cover));
-    }
-    if (svg_mask) {
-      promises.push(uploadBytes(maskRef, svg_mask));
-    }
-
-    const [coverResult, maskResult] = await Promise.all(promises);
-    return {
-      image_cover: coverResult?.ref.fullPath,
-      svg_mask: maskResult?.ref.fullPath,
-    };
-  }
-
-  function uploadVideo(
-    storage: FirebaseStorage,
-    videoPath: string,
-    videoFile: File,
-    callback: (videoURL: string) => void
-  ) {
-    const videoRef = ref(storage, videoPath);
-    const videoUploadTask = uploadBytesResumable(videoRef, videoFile);
-
-    videoUploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        const videoProgress = document.getElementById(
-          "video-progress"
-        ) as HTMLProgressElement;
-        videoProgress.hidden = false;
-        videoProgress.value = progress;
-        console.log(progress);
-      },
-      (error) => {
+      if (error || !data) {
         console.log(error);
-      },
-      async () => {
-        console.log("Finish to uploading video");
-        const videoURL = await getDownloadURL(videoRef);
-        callback(videoURL);
+        return;
       }
-    );
-  }
-
-  async function sendProjectDataToServer(url: string, projectData: any) {
-    const response = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(projectData),
-    });
-    return response;
-  }
+      console.log(`Project updated with id ${data}`);
+      Astro.redirect(`/admin/projects/${data}`);
+    }
+  });
 </script>

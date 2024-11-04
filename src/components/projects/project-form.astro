@@ -1,0 +1,158 @@
+---
+import type { Project } from "../../utils/interfaces/project.type";
+import FileInputPreview from "./file-input-preview.astro";
+import FileInput from "./file-input.astro";
+
+interface props {
+  project?: Project;
+}
+
+const props = Astro.props;
+
+const formatDate = (timestamp: number) => {
+  let date = new Date(timestamp);
+  let year = date.getFullYear();
+  let month = String(date.getMonth() + 1).padStart(2, "0");
+  let day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+---
+
+<input name='id' type='text' value={props.project.id} required hidden />
+
+<label class='input input-bordered flex items-center gap-2'>
+  Titre
+  <input
+    name='title'
+    type='text'
+    class='grow'
+    placeholder=''
+    value={props.project?.title}
+    required
+  />
+</label>
+
+<textarea
+  name='description'
+  class='textarea textarea-bordered'
+  placeholder='Résumé...'
+  rows='10'>{props.project?.description}</textarea
+>
+
+<label class='input input-bordered flex items-center gap-2'>
+  Crédits
+  <input
+    name='credits'
+    type='text'
+    class='grow'
+    placeholder='Samuel Freret, Camille Provost'
+    value={props.project?.credits}
+    required
+  />
+</label>
+
+<div class='flex flex-col lg:flex-row gap-4 justify-between'>
+  <label class='input input-bordered flex items-center gap-2'>
+    Localisation
+    <input
+      name='localisations'
+      type='text'
+      class='grow'
+      placeholder='Bordeaux'
+      value={props.project?.localisations}
+    />
+  </label>
+
+  <label class='input input-bordered flex items-center gap-2'>
+    Date de production
+    <input
+      name='production_date'
+      type='date'
+      class='grow'
+      value={formatDate(props.project?.production_date ?? 0)}
+      required
+    />
+  </label>
+</div>
+
+<div class='flex flex-col lg:flex-row gap-8 justify-between'>
+  <div>
+    <FileInputPreview
+      label='Couverture'
+      name='image_cover'
+      img={props.project.image_cover}
+    />
+    <FileInput
+      label='Couverture'
+      name='image_cover'
+      accept='image/*'
+      required={!props.project}
+    />
+  </div>
+  <div>
+    <FileInputPreview
+      label='Masque'
+      name='svg_mask'
+      img={props.project.svg_mask}
+    />
+    <FileInput
+      label='Masque'
+      name='svg_mask'
+      accept='image/*'
+      required={!props.project}
+    />
+  </div>
+</div>
+{
+  props.project && (
+    <video
+      id='video-preview'
+      src={props.project?.video}
+      controls
+      class='h-auto w-full mx-auto rounded-box'
+    />
+  )
+}
+<FileInput
+  label='Vidéo'
+  name='video'
+  accept='video/*'
+  required={!props.project}
+/>
+<progress
+  id='video-progress'
+  class='progress progress-primary w-full mt-2'
+  value='0'
+  max='100'
+  hidden></progress>
+
+<script>
+  const coverInput = document.getElementById(
+    "image_cover-input"
+  ) as HTMLInputElement;
+  coverInput.addEventListener("change", (event) =>
+    handleFileInputChange(event)
+  );
+  const maskInput = document.getElementById(
+    "svg_mask-input"
+  ) as HTMLInputElement;
+  maskInput.addEventListener("change", (event) => handleFileInputChange(event));
+
+  function handleFileInputChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.item(0);
+    const preview = document.getElementById(
+      input.id.replace("input", "preview")
+    ) as HTMLImageElement;
+    if (!file) {
+      preview.src = `https://placehold.co/600x400?text=${input.id === "cover-input" ? "Couverture" : "Masque"}`;
+      return;
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      preview.src = reader.result?.toString() ?? "";
+    };
+  }
+</script>

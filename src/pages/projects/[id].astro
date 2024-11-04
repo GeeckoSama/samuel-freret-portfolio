@@ -1,19 +1,17 @@
 ---
 import { AstroSeo } from "@astrolib/seo";
-import type { Project } from "../../utils/interfaces/project.type";
+import { actions } from "astro:actions";
 import ProjectHero from "../../components/ProjectHero.astro";
-import { getFirestore } from "firebase-admin/firestore";
-import { app } from "../../utils/firebase/server";
 import Layout from "../../layouts/Layout.astro";
 
-const db = getFirestore(app);
 const { id } = Astro.params;
-const projecttRef = db.doc(`projects/${id}`);
-const projectSnapshot = await projecttRef.get();
-const project = {
-  id: projectSnapshot.id,
-  ...projectSnapshot.data(),
-} as Project;
+if (!id) return Astro.redirect("/");
+const result = await Astro.callAction(actions.project.getProject, { id });
+if (result.error) {
+  console.log(result.error);
+  return Astro.redirect("/");
+}
+const project = result.data;
 
 const formatDate = (date: number) => {
   const dateObject = new Date(date);
