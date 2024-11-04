@@ -1,22 +1,14 @@
 ---
 import { AstroSeo } from "@astrolib/seo";
-import { getFirestore } from "firebase-admin/firestore";
+import { actions } from "astro:actions";
+import Contact from "../components/Contact.astro";
+import FlipText from "../components/FlipText.astro";
 import Hero from "../components/Hero.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import Layout from "../layouts/Layout.astro";
-import { app } from "../utils/firebase/server";
-import type { Projects } from "../utils/interfaces/project.type";
-import Contact from "../components/Contact.astro";
-import FlipText from "../components/FlipText.astro";
 
-const db = getFirestore(app);
-
-const projectstRef = db.collection("projects");
-const projectsSnapshot = await projectstRef.get();
-const projects = projectsSnapshot.docs.map((doc) => ({
-  id: doc.id,
-  ...doc.data(),
-})) as Projects;
+const result = await Astro.callAction(actions.project.getProjects, {});
+const projects = result.data;
 ---
 
 <AstroSeo
@@ -62,7 +54,7 @@ const projects = projectsSnapshot.docs.map((doc) => ({
       class='grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8 p-2 md:p-4 lg:p-8'
     >
       {
-        projects.map((project) => (
+        projects?.map((project) => (
           <div class='col-span-1 last:odd:col-span-2'>
             <ProjectCard project={project} />
           </div>
