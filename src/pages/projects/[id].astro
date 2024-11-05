@@ -62,7 +62,7 @@ const formatDate = (date: number) => {
           {project.localisations}
         </h2>
         <p class='text-xl text-primary-light dark:text-primary-dark'>
-          {project.description}
+          <Fragment set:html={project.description.replaceAll("\n", "<br>")} />
         </p>
         <h3
           class='text-lg italic text-end pb-4 text-primary-light dark:text-primary-dark'
