@@ -11,6 +11,7 @@ export type Project = {
   video: string;
   video_url?: string;
   svg_mask: string;
+  draft: boolean;
   create_at: number;
   update_at: number;
 };
@@ -59,6 +60,10 @@ export const ProjectSchema = z.object({
   svg_mask: z.string({
     invalid_type_error: "Le masque doit être une chaîne de caractères",
     required_error: "Le masque est obligatoire",
+  }),
+  draft: z.boolean({
+    invalid_type_error: "Le brouillon doit être un booléen",
+    required_error: "Le brouillon est obligatoire",
   }),
   create_at: z.number({
     invalid_type_error: "La date de création doit être un nombre",
@@ -109,4 +114,5 @@ export const NewProjectSchema = z.object({
   image_cover: FileSchema,
   video: FileSchema,
   svg_mask: FileSchema,
+  draft: z.boolean(),
 });

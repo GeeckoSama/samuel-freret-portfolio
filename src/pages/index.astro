@@ -7,7 +7,10 @@ import Hero from "../components/Hero.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import Layout from "../layouts/Layout.astro";
 
-const result = await Astro.callAction(actions.project.getProjects, {});
+const result = await Astro.callAction(
+  actions.project.getProductionProjects,
+  {}
+);
 const projects = result.data;
 ---
 

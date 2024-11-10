@@ -53,6 +53,27 @@ export const project = {
       return result.data as Projects;
     },
   }),
+  getProductionProjects: defineAction({
+    handler: async () => {
+      const db = getFirestore();
+      const projectsRef = db.collection("projects").where("draft", "==", false);
+      const projectsSnapshot = await projectsRef.get();
+      const result = z.array(ProjectSchema).safeParse(
+        projectsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+      );
+      if (!result.success) {
+        console.log(result.error);
+        throw new ActionError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: result.error.message,
+        });
+      }
+      return result.data as Projects;
+    },
+  }),
   createProject: defineAction({
     accept: "form",
     input: z.object({
@@ -62,6 +83,7 @@ export const project = {
       localisations: z.string().optional(),
       production_date: z.string().optional(),
       video_url: z.string().optional(),
+      draft: z.boolean().optional(),
     }),
     handler: async (input) => {
       const db = getFirestore();
@@ -85,6 +107,7 @@ export const project = {
       localisations: z.optional(z.string()),
       production_date: z.optional(z.string()),
       video_url: z.optional(z.string()),
+      draft: z.optional(z.boolean()),
     }),
     handler: async (input) => {
       const db = getFirestore();
@@ -109,6 +132,7 @@ export const project = {
       svg_mask: z.string().optional(),
       video: z.string().optional(),
       video_url: z.string().optional(),
+      draft: z.boolean().optional(),
     }),
     handler: async (input) => {
       const db = getFirestore();
