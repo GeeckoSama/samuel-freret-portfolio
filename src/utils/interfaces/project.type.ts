@@ -9,6 +9,7 @@ export type Project = {
   production_date: number;
   image_cover: string;
   video: string;
+  video_url?: string;
   svg_mask: string;
   create_at: number;
   update_at: number;
@@ -40,6 +41,12 @@ export const ProjectSchema = z.object({
     invalid_type_error: "La date de production doit être un nombre",
     required_error: "La date de production est obligatoire",
   }),
+  video_url: z
+    .string({
+      invalid_type_error:
+        "Le lien de la vidéo doit être une chaîne de caractères",
+    })
+    .optional(),
   image_cover: z.string({
     invalid_type_error:
       "L'image de couverture doit être une chaîne de caractères",
@@ -90,6 +97,13 @@ export const NewProjectSchema = z.object({
     .number({
       invalid_type_error: "La date de production doit être un nombre",
       required_error: "La date de production est obligatoire",
+    })
+    .optional(),
+  video_url: z
+    .string({
+      invalid_type_error:
+        "Le lien de la vidéo doit être une chaîne de caractères",
+      required_error: "Le lien de la vidéo est obligatoire",
     })
     .optional(),
   image_cover: FileSchema,

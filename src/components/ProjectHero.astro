@@ -8,6 +8,8 @@ interface Props {
 const { project } = Astro.props;
 const cdn =
   process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
+
+const devMode = import.meta.env.MODE === "development";
 ---
 
 <div id='container' class='relative h-[300vh]'>
@@ -26,7 +28,7 @@ const cdn =
       preload='auto'
       class='h-full w-screen object-cover border-8 border-base-light shadow-2xl'
     >
-      <source src={project.video} type='video/mp4' />
+      {!devMode && <source src={project.video} type='video/mp4' />}
     </video>
   </div>
   <div class='sticky top-[80%] bottom-24 w-full mix-blend-difference invert'>

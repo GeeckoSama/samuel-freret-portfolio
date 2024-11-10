@@ -61,6 +61,7 @@ export const project = {
       credits: z.string(),
       localisations: z.string().optional(),
       production_date: z.string().optional(),
+      video_url: z.string().optional(),
     }),
     handler: async (input) => {
       const db = getFirestore();
@@ -83,6 +84,7 @@ export const project = {
       credits: z.optional(z.string()),
       localisations: z.optional(z.string()),
       production_date: z.optional(z.string()),
+      video_url: z.optional(z.string()),
     }),
     handler: async (input) => {
       const db = getFirestore();
@@ -106,6 +108,7 @@ export const project = {
       image_cover: z.string().optional(),
       svg_mask: z.string().optional(),
       video: z.string().optional(),
+      video_url: z.string().optional(),
     }),
     handler: async (input) => {
       const db = getFirestore();

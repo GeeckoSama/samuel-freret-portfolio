@@ -69,6 +69,20 @@ const formatDate = (date: number) => {
         >
           {project.credits}
         </h3>
+        {
+          project.video_url && (
+            <div class='flex py-10 justify-center'>
+              <a
+                class='btn btn-primary'
+                href={project.video_url}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                Voir la vidéo
+              </a>
+            </div>
+          )
+        }
         <div class='flex pt-10'>
           <a href='../' class='btn btn-outline btn-primary'
             >Voir d'autre projets</a
