@@ -10,6 +10,7 @@ import partytown from "@astrojs/partytown";
 export default defineConfig({
   output: "server",
   site: "https://guiltyvision.com",
+  prefetch: true,
   integrations: [
     tailwind(),
     sitemap({

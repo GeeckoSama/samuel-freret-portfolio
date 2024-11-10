@@ -27,8 +27,18 @@ const project = result.data;
       </div> -->
       <form class='flex flex-col gap-4'>
         <ProjectForm project={project} />
-
-        <button type='submit' class='btn btn-primary mt-10'>Enregistrer</button>
+        <div class='flex justify-end gap-4 mt-10'>
+          <a
+            href='/admin/projects'
+            class='btn btn-error btn-outline'
+            data-astro-prefetch='false'
+          >
+            Annuler
+          </a>
+          <button type='submit' class='btn btn-success btn-outline'
+            >Enregistrer</button
+          >
+        </div>
       </form>
     </diV>
   </div>
