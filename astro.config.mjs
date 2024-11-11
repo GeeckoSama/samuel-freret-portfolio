@@ -15,8 +15,10 @@ export default defineConfig({
     tailwind(),
     sitemap({
       filter: (page) =>
-        page !== "https://guiltyvision.com/signin" &&
-        "https://guiltyvision.com/admin",
+        page !== "https://guiltyvision.com/admin/" &&
+        page !== "https://guiltyvision.com/admin/projects/" &&
+        page !== "https://guiltyvision.com/admin/projects/new/" &&
+        page !== "https://guiltyvision.com/signin/",
       changefreq: "weekly",
       priority: 0.7,
       lastmod: new Date("2024-09-23"),

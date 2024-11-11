@@ -78,7 +78,7 @@ const devMode = import.meta.env.MODE === "development";
     );
     const { gsap } = await import("gsap");
     const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-    const context = gsap.context(() => {
+    gsap.context(() => {
       gsap.registerPlugin(ScrollTrigger);
       gsap
         .timeline({

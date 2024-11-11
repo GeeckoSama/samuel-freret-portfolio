@@ -1,6 +1,4 @@
 ---
-import { Image } from "@unpic/astro";
-
 interface Props {
   label: string;
   name: string;
@@ -22,14 +20,4 @@ const CDN =
     alt={props.label}
     class='h-full w-full object-cover mx-auto rounded-box'
   />
-  <!-- {
-    props.img && (
-      <Image
-        src={CDN + props.img}
-        id={`${props.name}-preview-storage`}
-        layout='constrained'
-        class='h-full w-full object-cover mx-auto rounded-box'
-      />
-    )
-  } -->
 </div>

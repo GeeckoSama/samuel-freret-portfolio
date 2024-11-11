@@ -118,7 +118,7 @@ const project = result.data;
     "id"
   ) as string;
   confirmDeleteBtn?.addEventListener("click", async () => {
-    const { data, error } = await actions.project.deleteProject({
+    const { error } = await actions.project.deleteProject({
       id: projectId,
     });
     if (error) {

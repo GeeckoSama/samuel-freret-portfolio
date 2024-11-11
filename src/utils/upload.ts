@@ -4,7 +4,6 @@ import {
   ref,
   uploadBytes,
   uploadBytesResumable,
-  type FirebaseStorage,
 } from "firebase/storage";
 import { app } from "./firebase/client";
 

@@ -5,9 +5,6 @@ import { app } from "../utils/firebase/server";
 
 import { Image } from "@unpic/astro";
 
-const cdn =
-  process.env.PUBLIC_IMGIX_DOMAIN || import.meta.env.PUBLIC_IMGIX_DOMAIN;
-
 /* Check if the user is authenticated */
 try {
   const auth = getAuth(app);
