@@ -153,8 +153,9 @@ export const project = {
       const storage = getStorage(app);
       const projectRef = db.doc(`projects/${input.id}`);
       const [files] = await storage
-        .bucket()
-        .getFiles({ prefix: `/projects/${input.id}` });
+        .bucket("gs://samuel-freret-portfolio.appspot.com")
+        .getFiles({ prefix: `projects/${input.id}` });
+      //console.log(files.length);
       const deletePromises = files.map((file) => file.delete());
       await Promise.all(deletePromises);
       await projectRef.delete();

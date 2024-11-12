@@ -19,12 +19,12 @@ const project = result.data;
 <AdminLayout title={"Modificatio nde " + project.title}>
   <div class='lg:card lg:bg-base-200 mx-auto overflow-x-auto lg:max-w-5xl'>
     <diV class='lg:card-body'>
-      <!-- <div class='flex justify-end'>
+      <div class='flex justify-end'>
         <button
           class='btn btn-error btn-outline'
           onclick='deleteDialog.showModal()'>Supprimer</button
         >
-      </div> -->
+      </div>
       <form class='flex flex-col gap-4'>
         <ProjectForm project={project} />
         <div class='flex justify-end gap-4 mt-10'>
