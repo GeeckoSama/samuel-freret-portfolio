@@ -27,6 +27,13 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(form);
+    const svg_mask = formData.get("svg_mask") as File;
+    const image_cover = formData.get("image_cover") as File;
+    const video = formData.get("video") as File;
+    formData.set("image_cover", "");
+    formData.set("svg_mask", "");
+    formData.set("video", "");
+
     const { data, error } = await actions.project.createProject(formData);
     if (error || !data) {
       console.log(error);
@@ -34,9 +41,6 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
     }
     console.log(`Project created with id ${data}`);
 
-    const image_cover = formData.get("image_cover") as File;
-    const svg_mask = formData.get("svg_mask") as File;
-    const video = formData.get("video") as File;
     if (!image_cover || !svg_mask || !video) {
       console.log("Missing image_cover, svg_mask or video");
       return;

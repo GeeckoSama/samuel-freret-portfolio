@@ -23,6 +23,7 @@ const CDN =
           <th>Titre</th>
           <th>Vidéo</th>
           <th>Masque</th>
+          <th>Brouillon</th>
           <th>
             <a href='projects/new' class='btn btn-outline btn-primary'>
               Ajouter
@@ -58,6 +59,7 @@ const CDN =
                   />
                 </a>
               </td>
+              <td>{project.draft ? "Oui" : ""}</td>
               <td>
                 <a
                   href={"./projects/" + project.id}
